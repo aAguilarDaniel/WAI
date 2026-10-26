@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://vx4hites8t8p"
+path="res://.godot/imported/wai_base.fnt-0c25a3ac3343f1d910d271424ec104ae.fontdata"
+
+[deps]
+
+source_file="res://ui/diario/fuentes/wai_base.fnt"
+dest_files=["res://.godot/imported/wai_base.fnt-0c25a3ac3343f1d910d271424ec104ae.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=1

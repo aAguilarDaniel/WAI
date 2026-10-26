@@ -1,0 +1,131 @@
+[gd_scene load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://actors/player/jugador.gd" id="1_jugador"]
+[ext_resource type="SpriteFrames" path="res://actors/player/jugador_frames.tres" id="0_frames"]
+[ext_resource type="Script" path="res://actors/player/estados/maquina_estados.gd" id="2_maquina"]
+[ext_resource type="Script" path="res://systems/components/componente_salud.gd" id="3_salud"]
+[ext_resource type="Script" path="res://systems/components/componente_hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="5_hitbox"]
+[ext_resource type="Script" path="res://systems/components/componente_arma.gd" id="8_arma"]
+[ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="6_hud"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_quieto.gd" id="7_quieto"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_caminar.gd" id="7_caminar"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_correr.gd" id="7_correr"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_agachado.gd" id="7_agachado"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_saltar.gd" id="7_saltar"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_caer.gd" id="7_caer"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_rodar.gd" id="7_rodar"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_atacar.gd" id="7_atacar"]
+[ext_resource type="Script" path="res://actors/player/estados/estado_herido.gd" id="7_herido"]
+[ext_resource type="Script" path="res://actors/player/animador_jugador.gd" id="9_animador"]
+[ext_resource type="Script" path="res://actors/player/camara_jugador.gd" id="10_camara"]
+
+[sub_resource type="RectangleShape2D" id="Forma_pj"]
+resource_local_to_scene = true
+size = Vector2(12, 24)
+
+[sub_resource type="RectangleShape2D" id="Forma_hurtbox_pj"]
+size = Vector2(12, 24)
+
+[sub_resource type="RectangleShape2D" id="Forma_hitbox_pj"]
+size = Vector2(22, 14)
+
+[node name="Jugador" type="CharacterBody2D" groups=["jugador"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_jugador")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -12)
+sprite_frames = ExtResource("0_frames")
+animation = &"quieto"
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -12)
+shape = SubResource("Forma_pj")
+
+[node name="Salud" type="Node" parent="."]
+script = ExtResource("3_salud")
+salud_maxima = 6
+duracion_invulnerabilidad = 0.8
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("4_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -12)
+shape = SubResource("Forma_hurtbox_pj")
+
+[node name="HitboxAtaque" type="Area2D" parent="."]
+position = Vector2(16, -14)
+collision_layer = 8
+collision_mask = 64
+monitoring = false
+script = ExtResource("5_hitbox")
+dano = 1
+
+[node name="Forma" type="CollisionShape2D" parent="HitboxAtaque"]
+shape = SubResource("Forma_hitbox_pj")
+
+[node name="OrigenDisparo" type="Marker2D" parent="."]
+position = Vector2(0, -14)
+
+[node name="Arma" type="Node" parent="."]
+script = ExtResource("8_arma")
+empezar_con_todas = false
+
+[node name="EtiquetaEstado" type="Label" parent="."]
+offset_left = -32.0
+offset_top = -42.0
+offset_right = 32.0
+offset_bottom = -30.0
+theme_override_font_sizes/font_size = 8
+text = "Quieto"
+horizontal_alignment = 1
+
+[node name="Camara" type="Camera2D" parent="."]
+script = ExtResource("10_camara")
+position = Vector2(0, -20)
+limit_left = -220
+limit_top = -260
+limit_right = 840
+limit_bottom = 120
+position_smoothing_speed = 6.0
+
+[node name="HUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="Animador" type="Node" parent="."]
+script = ExtResource("9_animador")
+
+[node name="MaquinaEstados" type="Node" parent="."]
+script = ExtResource("2_maquina")
+estado_inicial = NodePath("Quieto")
+
+[node name="Quieto" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_quieto")
+
+[node name="Caminar" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_caminar")
+
+[node name="Correr" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_correr")
+
+[node name="Agachado" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_agachado")
+
+[node name="Saltar" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_saltar")
+
+[node name="Caer" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_caer")
+
+[node name="Rodar" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_rodar")
+
+[node name="Atacar" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_atacar")
+
+[node name="Herido" type="Node" parent="MaquinaEstados"]
+script = ExtResource("7_herido")

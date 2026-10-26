@@ -1,0 +1,27 @@
+# Godot 4 — caché de importación y archivos generados
+juego/.godot/
+juego/android/
+juego/*.translation
+
+# Capturas del trailer: los AVI del Movie Maker van sin comprimir y pesan
+# cientos de MB por minuto. Se regeneran con tools/captura.tscn.
+capturas/
+
+# Exportaciones
+export_presets.cfg
+*.exe
+*.pck
+*.zip
+*.x86_64
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Aseprite: los .aseprite fuente SÍ se versionan, los backups no
+*.aseprite-bak
+
+# Python: caché de bytecode de herramientas/
+__pycache__/
+*.pyc

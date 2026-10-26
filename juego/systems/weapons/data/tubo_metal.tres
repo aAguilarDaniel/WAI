@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ArmaData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://systems/weapons/arma_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = "tubo_metal"
+nombre = "Tubo de metal"
+tipo = 0
+dano = 2
+cadencia = 0.32
+retroceso = 0.0
+alcance = 18.0
+es_a_distancia = false
+peso_hum = 0.02
+texto_diario = "[PENDIENTE] Escribir en primera persona. Ver docs/TEXTOS_PENDIENTES.md"

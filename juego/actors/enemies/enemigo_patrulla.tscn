@@ -1,0 +1,80 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://actors/enemies/enemigo_patrulla.gd" id="1_enemigo"]
+[ext_resource type="SpriteFrames" path="res://actors/enemies/enemigo_frames.tres" id="0_frames_en"]
+[ext_resource type="Script" path="res://systems/components/componente_salud.gd" id="2_salud"]
+[ext_resource type="Script" path="res://systems/components/componente_hurtbox.gd" id="3_hurtbox"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="4_hitbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo.png" id="5_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="6_aditivo"]
+
+[sub_resource type="RectangleShape2D" id="Forma_en"]
+size = Vector2(12, 20)
+
+[sub_resource type="CircleShape2D" id="Forma_vision"]
+radius = 72.0
+
+[node name="EnemigoPatrulla" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_enemigo")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -10)
+sprite_frames = ExtResource("0_frames_en")
+animation = &"caminar"
+
+[node name="Brillo" type="Sprite2D" parent="."]
+material = ExtResource("6_aditivo")
+modulate = Color(0.42, 0.95, 0.55, 0)
+z_index = -1
+position = Vector2(0, -12)
+scale = Vector2(0.6, 0.5)
+texture = ExtResource("5_brillo")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("Forma_en")
+
+[node name="Salud" type="Node" parent="."]
+script = ExtResource("2_salud")
+salud_maxima = 3
+duracion_invulnerabilidad = 0.25
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("3_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -10)
+shape = SubResource("Forma_en")
+
+[node name="HitboxContacto" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("4_hitbox")
+dano = 1
+activa_al_inicio = true
+
+[node name="Forma" type="CollisionShape2D" parent="HitboxContacto"]
+position = Vector2(0, -10)
+shape = SubResource("Forma_en")
+
+[node name="DetectorSuelo" type="RayCast2D" parent="."]
+position = Vector2(8, -2)
+target_position = Vector2(0, 12)
+collision_mask = 1
+
+[node name="DetectorPared" type="RayCast2D" parent="."]
+position = Vector2(0, -10)
+target_position = Vector2(10, 0)
+collision_mask = 1
+
+[node name="Vision" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Forma" type="CollisionShape2D" parent="Vision"]
+position = Vector2(0, -10)
+shape = SubResource("Forma_vision")

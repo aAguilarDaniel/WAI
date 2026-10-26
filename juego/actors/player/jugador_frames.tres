@@ -1,0 +1,343 @@
+[gd_resource type="SpriteFrames" load_steps=43 format=3]
+
+[ext_resource type="Texture2D" path="res://art/placeholder/jugador.png" id="1_hoja"]
+
+[sub_resource type="AtlasTexture" id="quieto_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="quieto_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="quieto_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="quieto_3"]
+atlas = ExtResource("1_hoja")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_3"]
+atlas = ExtResource("1_hoja")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_4"]
+atlas = ExtResource("1_hoja")
+region = Rect2(96, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_5"]
+atlas = ExtResource("1_hoja")
+region = Rect2(120, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_6"]
+atlas = ExtResource("1_hoja")
+region = Rect2(144, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caminar_7"]
+atlas = ExtResource("1_hoja")
+region = Rect2(168, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(48, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_3"]
+atlas = ExtResource("1_hoja")
+region = Rect2(72, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_4"]
+atlas = ExtResource("1_hoja")
+region = Rect2(96, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_5"]
+atlas = ExtResource("1_hoja")
+region = Rect2(120, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_6"]
+atlas = ExtResource("1_hoja")
+region = Rect2(144, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="correr_7"]
+atlas = ExtResource("1_hoja")
+region = Rect2(168, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="saltar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="saltar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="saltar_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(48, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caer_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 96, 24, 24)
+
+[sub_resource type="AtlasTexture" id="caer_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 96, 24, 24)
+
+[sub_resource type="AtlasTexture" id="agachado_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 120, 24, 24)
+
+[sub_resource type="AtlasTexture" id="agachado_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 120, 24, 24)
+
+[sub_resource type="AtlasTexture" id="rodar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="rodar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="rodar_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(48, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="rodar_3"]
+atlas = ExtResource("1_hoja")
+region = Rect2(72, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="rodar_4"]
+atlas = ExtResource("1_hoja")
+region = Rect2(96, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="rodar_5"]
+atlas = ExtResource("1_hoja")
+region = Rect2(120, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="atacar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 168, 24, 24)
+
+[sub_resource type="AtlasTexture" id="atacar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 168, 24, 24)
+
+[sub_resource type="AtlasTexture" id="atacar_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(48, 168, 24, 24)
+
+[sub_resource type="AtlasTexture" id="atacar_3"]
+atlas = ExtResource("1_hoja")
+region = Rect2(72, 168, 24, 24)
+
+[sub_resource type="AtlasTexture" id="herido_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 192, 24, 24)
+
+[sub_resource type="AtlasTexture" id="herido_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 192, 24, 24)
+
+[sub_resource type="AtlasTexture" id="sentado_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 216, 24, 24)
+
+[sub_resource type="AtlasTexture" id="sentado_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(24, 216, 24, 24)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("quieto_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("quieto_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("quieto_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("quieto_3")
+}],
+"loop": true,
+"name": &"quieto",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("caminar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("caminar_7")
+}],
+"loop": true,
+"name": &"caminar",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("correr_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("correr_7")
+}],
+"loop": true,
+"name": &"correr",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("saltar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("saltar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("saltar_2")
+}],
+"loop": false,
+"name": &"saltar",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("caer_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("caer_1")
+}],
+"loop": false,
+"name": &"caer",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("agachado_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("agachado_1")
+}],
+"loop": true,
+"name": &"agachado",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("rodar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("rodar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("rodar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("rodar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("rodar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("rodar_5")
+}],
+"loop": false,
+"name": &"rodar",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("atacar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("atacar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("atacar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("atacar_3")
+}],
+"loop": false,
+"name": &"atacar",
+"speed": 13.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("herido_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("herido_1")
+}],
+"loop": false,
+"name": &"herido",
+"speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("sentado_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("sentado_1")
+}],
+"loop": true,
+"name": &"sentado",
+"speed": 5.0
+}]

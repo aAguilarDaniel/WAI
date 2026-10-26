@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://systems/efectos/efecto_temporal.gd" id="1_temp"]
+
+[sub_resource type="Gradient" id="Rampa_chispa"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 0.95, 0.78, 1, 1, 0.6, 0.2, 1, 0.5, 0.15, 0.08, 0)
+
+[node name="Chispas" type="CPUParticles2D"]
+z_index = 15
+emitting = false
+amount = 10
+lifetime = 0.34
+one_shot = true
+explosiveness = 1.0
+randomness = 0.6
+lifetime_randomness = 0.4
+spread = 52.0
+gravity = Vector2(0, 260)
+initial_velocity_min = 55.0
+initial_velocity_max = 145.0
+damping_min = 60.0
+damping_max = 140.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color_ramp = SubResource("Rampa_chispa")
+script = ExtResource("1_temp")

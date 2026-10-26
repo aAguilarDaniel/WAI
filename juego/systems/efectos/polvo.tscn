@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://systems/efectos/efecto_temporal.gd" id="1_temp"]
+
+[sub_resource type="Gradient" id="Rampa_polvo"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.62, 0.5, 0.44, 0.75, 0.35, 0.27, 0.26, 0)
+
+[node name="Polvo" type="CPUParticles2D"]
+z_index = -1
+emitting = false
+amount = 7
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.9
+randomness = 0.7
+direction = Vector2(0, -1)
+spread = 82.0
+gravity = Vector2(0, 40)
+initial_velocity_min = 12.0
+initial_velocity_max = 40.0
+damping_min = 40.0
+damping_max = 90.0
+scale_amount_min = 1.0
+scale_amount_max = 2.0
+color_ramp = SubResource("Rampa_polvo")
+script = ExtResource("1_temp")

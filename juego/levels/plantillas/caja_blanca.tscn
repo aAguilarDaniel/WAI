@@ -1,0 +1,280 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="PackedScene" path="res://actors/player/jugador.tscn" id="1_jugador"]
+[ext_resource type="PackedScene" path="res://actors/enemies/enemigo_patrulla.tscn" id="2_enemigo"]
+[ext_resource type="PackedScene" path="res://ui/diario/diario.tscn" id="3_diario"]
+[ext_resource type="PackedScene" path="res://systems/pickups/recogible.tscn" id="4_recogible"]
+[ext_resource type="Resource" path="res://systems/weapons/data/lanza_plasma.tres" id="5_plasma"]
+[ext_resource type="PackedScene" path="res://systems/save_points/terminal_crt.tscn" id="6_crt"]
+
+[sub_resource type="RectangleShape2D" id="Rect_8x184"]
+size = Vector2(8, 184)
+
+[sub_resource type="RectangleShape2D" id="Rect_40x12"]
+size = Vector2(40, 12)
+
+[sub_resource type="RectangleShape2D" id="Rect_48x8"]
+size = Vector2(48, 8)
+
+[sub_resource type="RectangleShape2D" id="Rect_60x8"]
+size = Vector2(60, 8)
+
+[sub_resource type="RectangleShape2D" id="Rect_72x16"]
+size = Vector2(72, 16)
+
+[sub_resource type="RectangleShape2D" id="Rect_1000x32"]
+size = Vector2(1000, 32)
+
+[node name="CajaBlanca" type="Node2D"]
+
+[node name="Fondo" type="ColorRect" parent="."]
+z_index = -10
+offset_left = -220.0
+offset_top = -280.0
+offset_right = 840.0
+offset_bottom = 120.0
+color = Color(0.106, 0.098, 0.129, 1)
+
+[node name="Plataformas" type="Node2D" parent="."]
+
+[node name="Suelo" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(300, 16)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/Suelo"]
+shape = SubResource("Rect_1000x32")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/Suelo"]
+offset_left = -500.0
+offset_top = -16.0
+offset_right = 500.0
+offset_bottom = 16.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="ParedIzquierda" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(-204, -60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/ParedIzquierda"]
+shape = SubResource("Rect_8x184")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/ParedIzquierda"]
+offset_left = -4.0
+offset_top = -92.0
+offset_right = 4.0
+offset_bottom = 92.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="ParedDerecha" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(804, -60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/ParedDerecha"]
+shape = SubResource("Rect_8x184")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/ParedDerecha"]
+offset_left = -4.0
+offset_top = -92.0
+offset_right = 4.0
+offset_bottom = 92.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="Escalon" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(70, -6)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/Escalon"]
+shape = SubResource("Rect_40x12")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/Escalon"]
+offset_left = -20.0
+offset_top = -6.0
+offset_right = 20.0
+offset_bottom = 6.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="Salto1" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(150, -22)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/Salto1"]
+shape = SubResource("Rect_48x8")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/Salto1"]
+offset_left = -24.0
+offset_top = -4.0
+offset_right = 24.0
+offset_bottom = 4.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="Salto2" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(230, -48)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/Salto2"]
+shape = SubResource("Rect_48x8")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/Salto2"]
+offset_left = -24.0
+offset_top = -4.0
+offset_right = 24.0
+offset_bottom = 4.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="Salto3" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(310, -76)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/Salto3"]
+shape = SubResource("Rect_48x8")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/Salto3"]
+offset_left = -24.0
+offset_top = -4.0
+offset_right = 24.0
+offset_bottom = 4.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="TechoBajo" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(420, -24)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/TechoBajo"]
+shape = SubResource("Rect_72x16")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/TechoBajo"]
+offset_left = -36.0
+offset_top = -8.0
+offset_right = 36.0
+offset_bottom = 8.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="EsquinaIzq" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(490, -60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/EsquinaIzq"]
+shape = SubResource("Rect_40x12")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/EsquinaIzq"]
+offset_left = -20.0
+offset_top = -6.0
+offset_right = 20.0
+offset_bottom = 6.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="EsquinaDer" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(546, -60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/EsquinaDer"]
+shape = SubResource("Rect_40x12")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/EsquinaDer"]
+offset_left = -20.0
+offset_top = -6.0
+offset_right = 20.0
+offset_bottom = 6.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="SueloEsquina" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(518, -20)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/SueloEsquina"]
+shape = SubResource("Rect_60x8")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/SueloEsquina"]
+offset_left = -30.0
+offset_top = -4.0
+offset_right = 30.0
+offset_bottom = 4.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="AlcanzableJusto" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(650, -40)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/AlcanzableJusto"]
+shape = SubResource("Rect_48x8")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/AlcanzableJusto"]
+offset_left = -24.0
+offset_top = -4.0
+offset_right = 24.0
+offset_bottom = 4.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="Inalcanzable" type="StaticBody2D" parent="Plataformas"]
+position = Vector2(730, -60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape2D" parent="Plataformas/Inalcanzable"]
+shape = SubResource("Rect_48x8")
+
+[node name="Vista" type="ColorRect" parent="Plataformas/Inalcanzable"]
+offset_left = -24.0
+offset_top = -4.0
+offset_right = 24.0
+offset_bottom = 4.0
+color = Color(0.788, 0.788, 0.812, 1)
+
+[node name="Jugador" parent="." instance=ExtResource("1_jugador")]
+position = Vector2(0, 0)
+
+[node name="Enemigos" type="Node2D" parent="."]
+
+[node name="Enemigo1" parent="Enemigos" instance=ExtResource("2_enemigo")]
+position = Vector2(200, 0)
+direccion_inicial = -1
+
+[node name="Enemigo2" parent="Enemigos" instance=ExtResource("2_enemigo")]
+position = Vector2(600, 0)
+direccion_inicial = 1
+
+[node name="Enemigo3" parent="Enemigos" instance=ExtResource("2_enemigo")]
+position = Vector2(310, -80)
+velocidad_patrulla = 22.0
+
+[node name="Recogibles" type="Node2D" parent="."]
+
+[node name="CuadernoDeCampo" parent="Recogibles" instance=ExtResource("4_recogible")]
+position = Vector2(100, 0)
+clase = 1
+titulo_entrada = "Un cuaderno"
+texto_entrada = "[PENDIENTE] Escribir en primera persona. Ver docs/TEXTOS_PENDIENTES.md"
+
+[node name="ArmaPlasma" parent="Recogibles" instance=ExtResource("4_recogible")]
+position = Vector2(520, -28)
+clase = 0
+arma = ExtResource("5_plasma")
+
+[node name="Vendas" parent="Recogibles" instance=ExtResource("4_recogible")]
+position = Vector2(240, -52)
+clase = 2
+cantidad = 2
+
+[node name="Terminales" type="Node2D" parent="."]
+
+[node name="Terminal01" parent="Terminales" instance=ExtResource("6_crt")]
+position = Vector2(360, 0)
+checkpoint_id = "caja_blanca_crt_01"
+
+[node name="Terminal02" parent="Terminales" instance=ExtResource("6_crt")]
+position = Vector2(700, 0)
+checkpoint_id = "caja_blanca_crt_02"
+
+[node name="Diario" parent="." instance=ExtResource("3_diario")]

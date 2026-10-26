@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ArmaData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://systems/weapons/arma_data.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://systems/weapons/proyectil_bala.tscn" id="2_proy"]
+
+[resource]
+script = ExtResource("1_script")
+id = "pistola_reciclada"
+nombre = "Pistola reciclada"
+tipo = 1
+dano = 1
+cadencia = 0.28
+retroceso = 20.0
+alcance = 12.0
+es_a_distancia = true
+escena_proyectil = ExtResource("2_proy")
+velocidad_proyectil = 240.0
+vida_proyectil = 1.1
+peso_hum = 0.01
+texto_diario = "[PENDIENTE] Escribir en primera persona. Ver docs/TEXTOS_PENDIENTES.md"

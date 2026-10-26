@@ -1,0 +1,131 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://ui/menu/menu_principal.gd" id="1_menu"]
+[ext_resource type="Shader" path="res://shaders/cielo.gdshader" id="2_cielo"]
+[ext_resource type="Script" path="res://ui/cielo.gd" id="3_cielo_gd"]
+[ext_resource type="Shader" path="res://shaders/paleta_alma.gdshader" id="4_paleta"]
+[ext_resource type="SpriteFrames" path="res://actors/player/jugador_frames.tres" id="5_frames"]
+
+[sub_resource type="ShaderMaterial" id="Mat_cielo"]
+shader = ExtResource("2_cielo")
+shader_parameter/desplazamiento_y = 0.0
+shader_parameter/desplazamiento_x = 0.0
+shader_parameter/alto_viewport = 216.0
+shader_parameter/horizonte = 0.66
+shader_parameter/grosor_brasa = 0.15
+shader_parameter/pulso = 0.07
+
+[sub_resource type="ShaderMaterial" id="Mat_paleta"]
+shader = ExtResource("4_paleta")
+shader_parameter/peso_maquina = 0.0
+shader_parameter/peso_humano = 0.0
+shader_parameter/vineta_fuerza = 0.78
+shader_parameter/bloom_fuerza = 0.7
+
+[node name="MenuPrincipal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_menu")
+
+[node name="Cielo" type="CanvasLayer" parent="."]
+layer = -100
+script = ExtResource("3_cielo_gd")
+
+[node name="Lienzo" type="ColorRect" parent="Cielo"]
+material = SubResource("Mat_cielo")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Mundo" type="Node2D" parent="."]
+
+[node name="Fondo" type="Node2D" parent="Mundo"]
+
+[node name="Suelo" type="ColorRect" parent="Mundo"]
+offset_left = -40.0
+offset_top = 162.0
+offset_right = 424.0
+offset_bottom = 240.0
+color = Color(0.204, 0.149, 0.165, 1)
+
+[node name="Ceja" type="ColorRect" parent="Mundo"]
+offset_left = -40.0
+offset_top = 162.0
+offset_right = 424.0
+offset_bottom = 164.0
+color = Color(0.729, 0.455, 0.212, 1)
+
+[node name="Figura" type="AnimatedSprite2D" parent="Mundo"]
+position = Vector2(272, 150)
+sprite_frames = ExtResource("5_frames")
+animation = &"quieto"
+autoplay = "quieto"
+
+[node name="PaletaAlma" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="Lienzo" type="ColorRect" parent="PaletaAlma"]
+material = SubResource("Mat_paleta")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Interfaz" type="CanvasLayer" parent="."]
+layer = 6
+
+[node name="Titulo" type="Label" parent="Interfaz"]
+offset_left = 20.0
+offset_top = 24.0
+offset_right = 320.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(1, 0.878, 0.62, 1)
+theme_override_font_sizes/font_size = 24
+text = "WHO AM I"
+
+[node name="Subtitulo" type="Label" parent="Interfaz"]
+offset_left = 22.0
+offset_top = 54.0
+offset_right = 340.0
+offset_bottom = 68.0
+theme_override_colors/font_color = Color(0.686, 0.494, 0.353, 1)
+text = ""
+
+[node name="Opciones" type="VBoxContainer" parent="Interfaz"]
+offset_left = 20.0
+offset_top = 98.0
+offset_right = 200.0
+offset_bottom = 162.0
+theme_override_constants/separation = 3
+
+[node name="Jugar" type="Button" parent="Interfaz/Opciones"]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_top = NodePath("../Salir")
+focus_neighbor_bottom = NodePath("../Continuar")
+text = "DESPERTAR"
+
+[node name="Continuar" type="Button" parent="Interfaz/Opciones"]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_top = NodePath("../Jugar")
+focus_neighbor_bottom = NodePath("../Salir")
+text = "SEGUIR DONDE ESTABA"
+
+[node name="Salir" type="Button" parent="Interfaz/Opciones"]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_neighbor_top = NodePath("../Continuar")
+focus_neighbor_bottom = NodePath("../Jugar")
+text = "APAGAR"
+
+[node name="Pie" type="Label" parent="Interfaz"]
+offset_left = 20.0
+offset_top = 194.0
+offset_right = 364.0
+offset_bottom = 208.0
+theme_override_colors/font_color = Color(0.478, 0.4, 0.376, 1)
+text = "Daniel Aguilar · Juan David Monsalve"

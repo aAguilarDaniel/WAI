@@ -1,0 +1,5 @@
+# Herramientas de generación de arte y audio (herramientas/*.py)
+Pillow>=10.0.0
+
+# Solo para herramientas/trailer.py — monta el tráiler con ffmpeg
+imageio-ffmpeg>=0.4.9

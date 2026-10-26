@@ -1,0 +1,25 @@
+# Normaliza todo a LF dentro del repo. Sin esto, un colaborador en Windows y otro
+# en macOS se pisan el archivo completo en cada commit y los .tscn se vuelven
+# imposibles de revisar.
+* text=auto eol=lf
+
+# Fuentes de Godot: texto, merge normal
+*.gd      text eol=lf
+*.gdshader text eol=lf
+*.tscn    text eol=lf
+*.tres    text eol=lf
+*.godot   text eol=lf
+*.import  text eol=lf
+*.uid     text eol=lf
+*.cfg     text eol=lf
+
+# Binarios: que Git no los toque nunca
+*.png     binary
+*.wav     binary
+*.ogg     binary
+*.mp3     binary
+*.aseprite binary
+*.ttf     binary
+# Los .fnt generados están en CRLF y los lee el parser BMFont de Godot:
+# -text los deja byte a byte como están, pero siguen siendo diffables.
+*.fnt     -text

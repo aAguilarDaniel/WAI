@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://c4by0bouerr63"
+path="res://.godot/imported/wai_hibrida.fnt-775eb0ff264c8267b50e9a7f974a97a2.fontdata"
+
+[deps]
+
+source_file="res://ui/diario/fuentes/wai_hibrida.fnt"
+dest_files=["res://.godot/imported/wai_hibrida.fnt-775eb0ff264c8267b50e9a7f974a97a2.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=1

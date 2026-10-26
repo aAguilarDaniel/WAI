@@ -1,0 +1,102 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://ui/diario/diario.gd" id="1_diario"]
+[ext_resource type="Script" path="res://ui/diario/tipografia_alma.gd" id="2_tipo"]
+[ext_resource type="Script" path="res://ui/diario/panel_ajustes.gd" id="3_ajustes"]
+[ext_resource type="FontFile" path="res://ui/diario/fuentes/wai_humana.fnt" id="4_humana"]
+[ext_resource type="FontFile" path="res://ui/diario/fuentes/wai_hibrida.fnt" id="5_hibrida"]
+[ext_resource type="FontFile" path="res://ui/diario/fuentes/wai_maquina.fnt" id="6_maquina"]
+
+[sub_resource type="StyleBoxFlat" id="Fondo_libro"]
+bg_color = Color(0.09, 0.08, 0.11, 0.96)
+
+[node name="Diario" type="CanvasLayer"]
+layer = 10
+process_mode = 3
+script = ExtResource("1_diario")
+
+[node name="Raiz" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Fondo" type="ColorRect" parent="Raiz"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.04, 0.035, 0.05, 0.86)
+
+[node name="MenuMinimo" type="VBoxContainer" parent="Raiz"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -22.0
+offset_right = 80.0
+offset_bottom = 22.0
+alignment = 1
+
+[node name="Titulo" type="Label" parent="Raiz/MenuMinimo"]
+layout_mode = 2
+text = "PAUSA"
+horizontal_alignment = 1
+
+[node name="Aviso" type="Label" parent="Raiz/MenuMinimo"]
+layout_mode = 2
+text = "No llevo nada donde anotar."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Libro" type="MarginContainer" parent="Raiz"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Pestanas" type="TabContainer" parent="Raiz/Libro"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("Fondo_libro")
+
+[node name="Bitacora" type="ScrollContainer" parent="Raiz/Libro/Pestanas"]
+layout_mode = 2
+
+[node name="Lista" type="VBoxContainer" parent="Raiz/Libro/Pestanas/Bitacora"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Arsenal" type="ScrollContainer" parent="Raiz/Libro/Pestanas"]
+visible = false
+layout_mode = 2
+
+[node name="Lista" type="VBoxContainer" parent="Raiz/Libro/Pestanas/Arsenal"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Estadisticas" type="ScrollContainer" parent="Raiz/Libro/Pestanas"]
+visible = false
+layout_mode = 2
+
+[node name="Lista" type="VBoxContainer" parent="Raiz/Libro/Pestanas/Estadisticas"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Ajustes" type="ScrollContainer" parent="Raiz/Libro/Pestanas"]
+visible = false
+layout_mode = 2
+
+[node name="Panel" type="VBoxContainer" parent="Raiz/Libro/Pestanas/Ajustes"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_ajustes")
+
+[node name="Tipografia" type="Node" parent="."]
+script = ExtResource("2_tipo")
+fuente_humana = ExtResource("4_humana")
+fuente_hibrida = ExtResource("5_hibrida")
+fuente_maquina = ExtResource("6_maquina")
+tamano_fuente = 12

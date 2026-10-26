@@ -1,0 +1,67 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://systems/save_points/terminal_crt.gd" id="1_crt"]
+[ext_resource type="Shader" path="res://shaders/crt.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" path="res://art/placeholder/crt/crt_cuerpo.png" id="3_cuerpo"]
+[ext_resource type="Texture2D" path="res://art/placeholder/crt/crt_cable.png" id="4_cable"]
+
+[sub_resource type="ShaderMaterial" id="Mat_crt"]
+resource_local_to_scene = true
+shader = ExtResource("2_shader")
+shader_parameter/curvatura = 0.1
+shader_parameter/intensidad_scanline = 0.35
+shader_parameter/densidad_scanline = 90.0
+shader_parameter/ruido = 0.06
+shader_parameter/bloom = 0.25
+shader_parameter/aberracion = 0.0025
+shader_parameter/tinte_fosforo = Vector3(0.62, 1, 0.72)
+shader_parameter/deriva = 0.0
+shader_parameter/encendido = 0.0
+
+[sub_resource type="RectangleShape2D" id="Forma_crt"]
+size = Vector2(44, 32)
+
+[node name="TerminalCRT" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_crt")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(-8, -16)
+shape = SubResource("Forma_crt")
+
+; El cable entre el jugador y la maquina: la cita a Paik tiene que ser legible.
+[node name="Cable" type="Sprite2D" parent="."]
+position = Vector2(-16, -3)
+texture = ExtResource("4_cable")
+
+[node name="Cuerpo" type="Sprite2D" parent="."]
+position = Vector2(0, -14)
+texture = ExtResource("3_cuerpo")
+
+; visibility_layer = 2 y el SubViewport solo mira la capa 1: asi la pantalla
+; queda fuera de su propio encuadre y no hay recursion infinita.
+[node name="Pantalla" type="Sprite2D" parent="."]
+visibility_layer = 2
+position = Vector2(0, -15)
+material = SubResource("Mat_crt")
+
+[node name="Circuito" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+canvas_cull_mask = 1
+size = Vector2i(48, 36)
+render_target_update_mode = 0
+
+[node name="CamaraCircuito" type="Camera2D" parent="Circuito"]
+enabled = false
+zoom = Vector2(1.8, 1.8)
+
+[node name="CamaraEscena" type="Camera2D" parent="."]
+position = Vector2(-14, -18)
+enabled = false
+zoom = Vector2(1.6, 1.6)
+
+[node name="Zumbido" type="AudioStreamPlayer2D" parent="."]
+bus = "SFX"

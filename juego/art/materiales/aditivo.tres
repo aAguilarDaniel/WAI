@@ -1,0 +1,9 @@
+; Mezcla aditiva compartida por todo lo que emite luz: el ojo del enemigo, el
+; reborde de los recogibles, el fosforo del CRT y los destellos de impacto.
+;
+; Va como recurso suelto y no como sub_resource en cada escena para que cambiar
+; como se comporta la luz del juego sea un archivo, no diez.
+[gd_resource type="CanvasItemMaterial" format=3]
+
+[resource]
+blend_mode = 1

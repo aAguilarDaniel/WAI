@@ -1,0 +1,89 @@
+[gd_resource type="Theme" load_steps=9 format=3]
+
+[ext_resource type="FontFile" path="res://ui/diario/fuentes/wai_base.fnt" id="1_base"]
+
+[sub_resource type="StyleBoxFlat" id="Panel_libro"]
+bg_color = Color(0.055, 0.043, 0.055, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.29, 0.2, 0.16, 0.85)
+content_margin_left = 6.0
+content_margin_top = 5.0
+content_margin_right = 6.0
+content_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="Pestana_activa"]
+bg_color = Color(0.13, 0.095, 0.085, 1)
+border_width_bottom = 1
+border_color = Color(0.85, 0.53, 0.22, 1)
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="Pestana_inactiva"]
+bg_color = Color(0.07, 0.055, 0.065, 1)
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="Vacio"]
+
+[sub_resource type="StyleBoxFlat" id="Boton_normal"]
+bg_color = Color(0.09, 0.072, 0.08, 0)
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="Boton_encima"]
+bg_color = Color(0.16, 0.1, 0.07, 1)
+border_width_left = 2
+border_color = Color(0.93, 0.6, 0.24, 1)
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="Boton_pulsado"]
+bg_color = Color(0.28, 0.16, 0.09, 1)
+border_width_left = 2
+border_color = Color(1, 0.78, 0.4, 1)
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+
+[resource]
+default_font = ExtResource("1_base")
+default_font_size = 12
+Button/colors/font_color = Color(0.68, 0.6, 0.55, 1)
+Button/colors/font_disabled_color = Color(0.32, 0.28, 0.28, 1)
+Button/colors/font_focus_color = Color(1, 0.87, 0.65, 1)
+Button/colors/font_hover_color = Color(1, 0.87, 0.65, 1)
+Button/colors/font_pressed_color = Color(1, 0.95, 0.82, 1)
+Button/styles/disabled = SubResource("Boton_normal")
+Button/styles/focus = SubResource("Boton_encima")
+Button/styles/hover = SubResource("Boton_encima")
+Button/styles/normal = SubResource("Boton_normal")
+Button/styles/pressed = SubResource("Boton_pulsado")
+CheckButton/colors/font_color = Color(0.68, 0.6, 0.55, 1)
+CheckButton/colors/font_hover_color = Color(1, 0.87, 0.65, 1)
+HSeparator/constants/separation = 3
+Label/colors/font_color = Color(0.82, 0.75, 0.68, 1)
+Label/colors/font_outline_color = Color(0.04, 0.03, 0.04, 1)
+PanelContainer/styles/panel = SubResource("Panel_libro")
+Panel/styles/panel = SubResource("Panel_libro")
+ScrollContainer/styles/panel = SubResource("Vacio")
+TabContainer/colors/font_hovered_color = Color(1, 0.87, 0.65, 1)
+TabContainer/colors/font_selected_color = Color(1, 0.83, 0.5, 1)
+TabContainer/colors/font_unselected_color = Color(0.5, 0.44, 0.42, 1)
+TabContainer/constants/side_margin = 2
+TabContainer/styles/panel = SubResource("Panel_libro")
+TabContainer/styles/tab_hovered = SubResource("Pestana_activa")
+TabContainer/styles/tab_selected = SubResource("Pestana_activa")
+TabContainer/styles/tab_unselected = SubResource("Pestana_inactiva")
+TabContainer/styles/tabbar_background = SubResource("Vacio")

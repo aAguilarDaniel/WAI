@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://systems/weapons/proyectil.gd" id="1_proy"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="2_hitbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/proyectiles/radiacion.png" id="3_tex"]
+
+[sub_resource type="AtlasTexture" id="f0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 10, 6)
+
+[sub_resource type="AtlasTexture" id="f1"]
+atlas = ExtResource("3_tex")
+region = Rect2(10, 0, 10, 6)
+
+[sub_resource type="AtlasTexture" id="f2"]
+atlas = ExtResource("3_tex")
+region = Rect2(20, 0, 10, 6)
+
+[sub_resource type="SpriteFrames" id="Frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("f0")
+}, {
+"duration": 1.0,
+"texture": SubResource("f1")
+}, {
+"duration": 1.0,
+"texture": SubResource("f2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 14.0
+}]
+
+[sub_resource type="RectangleShape2D" id="Forma_proy"]
+size = Vector2(6, 3)
+
+[node name="Proyectil" type="Node2D"]
+script = ExtResource("1_proy")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("Frames")
+autoplay = "default"
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 65
+script = ExtResource("2_hitbox")
+dano = 1
+activa_al_inicio = true
+
+[node name="Forma" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("Forma_proy")

@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://cp6db71ngrepp"
+path="res://.godot/imported/wai_maquina.fnt-b3d71b28bc2134aa38235aa55abb4afb.fontdata"
+
+[deps]
+
+source_file="res://ui/diario/fuentes/wai_maquina.fnt"
+dest_files=["res://.godot/imported/wai_maquina.fnt-b3d71b28bc2134aa38235aa55abb4afb.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=1
