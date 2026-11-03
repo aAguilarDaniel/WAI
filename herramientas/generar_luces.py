@@ -49,6 +49,25 @@ def destello(lado=17):
     return img
 
 
+def cono(ancho=48, alto=64):
+    """Haz de lampara: trapecio que se abre hacia abajo y se apaga al alejarse.
+    Lo usan las lamparas colgantes del interior (tools/constructor_nivel.gd)."""
+    img = Image.new("RGBA", (ancho, alto), (255, 255, 255, 0))
+    px = img.load()
+    centro = (ancho - 1) / 2.0
+    for y in range(alto):
+        t = y / float(alto - 1)
+        medio_ancho = 2.0 + t * (ancho / 2.0 - 2.0)
+        caida = (1.0 - t) ** 1.6
+        for x in range(ancho):
+            lado = abs(x - centro) / medio_ancho
+            if lado >= 1.0:
+                continue
+            a = caida * (1.0 - lado ** 2.0) * 0.9
+            px[x, y] = (255, 255, 255, int(255 * a))
+    return img
+
+
 def guardar(img, nombre):
     os.makedirs(DESTINO, exist_ok=True)
     ruta = os.path.join(DESTINO, nombre)
@@ -61,3 +80,4 @@ if __name__ == "__main__":
     guardar(halo(32, 2.6), "brillo.png")
     guardar(halo(64, 3.2), "brillo_grande.png")
     guardar(destello(), "destello.png")
+    guardar(cono(), "cono.png")

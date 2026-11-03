@@ -60,6 +60,7 @@ func _ready() -> void:
 	if figura.sprite_frames != null and figura.sprite_frames.has_animation(&"quieto"):
 		figura.play(&"quieto")
 	DirectorAudio.ambiente("ambiente", -16.0)
+	DirectorAudio.parar_musica()
 	# Atajo de desarrollo: entra al nivel sin esperar el arranque del monitor.
 	#   godot --path juego -- --saltar-menu
 	# Sirve para probar el nivel sin pasar por aqui veinte veces al dia, y es el
@@ -128,13 +129,20 @@ func _al_mover() -> void:
 func _al_jugar() -> void:
 	DirectorAudio.efecto("menu_aceptar", -6.0)
 	CargadorEscenas.continuar_partida = false
+	CargadorEscenas.datos_en_transito = {}
 	Guardado.borrar()
+	# Los autoloads sobreviven al cambio de escena: una partida nueva tiene que
+	# empezar con el eje en cero y sin nada de la anterior.
+	EstadoJuego.reiniciar()
+	Alma.cargar(0.0)
 	CargadorEscenas.cambiar_a(RUTA_NIVEL)
 
 func _al_continuar() -> void:
 	DirectorAudio.efecto("menu_aceptar", -6.0)
 	CargadorEscenas.continuar_partida = true
-	CargadorEscenas.cambiar_a(RUTA_NIVEL)
+	CargadorEscenas.datos_en_transito = {}
+	# Se retoma en el nivel de la ultima terminal, que puede ser el interior.
+	CargadorEscenas.cambiar_a(Guardado.nivel_guardado())
 
 func _al_salir() -> void:
 	DirectorAudio.efecto("menu_aceptar", -9.0)

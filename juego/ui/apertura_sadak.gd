@@ -33,6 +33,10 @@ signal control_devuelto
 @onready var titulo: Label = $Titulo
 
 var _camara: Camera2D = null
+var _guion: Tween = null
+var _zoom_normal: Vector2 = Vector2.ONE
+var _desplazamiento_normal: Vector2 = Vector2.ZERO
+var _propiedad: String = "offset"
 
 func _ready() -> void:
 	if jugador == null:
@@ -47,30 +51,46 @@ func _ready() -> void:
 
 func _comenzar() -> void:
 	jugador.fijar_control(false)
-	var zoom_normal: Vector2 = _camara.zoom if _camara != null else Vector2.ONE
+	_zoom_normal = _camara.zoom if _camara != null else Vector2.ONE
 	# offset_base y no offset: CamaraJugador escribe offset cada frame para la
 	# sacudida, asi que un tween sobre offset se veria pisado en el acto.
-	var propiedad: String = "offset_base" if _camara is CamaraJugador else "offset"
-	var desplazamiento_normal: Vector2 = Vector2.ZERO
+	_propiedad = "offset_base" if _camara is CamaraJugador else "offset"
 	if _camara != null:
-		desplazamiento_normal = _camara.get(propiedad)
+		_desplazamiento_normal = _camara.get(_propiedad)
 		_camara.zoom = zoom_apertura
-		_camara.set(propiedad, desplazamiento_apertura)
+		_camara.set(_propiedad, desplazamiento_apertura)
 
-	var guion: Tween = create_tween()
-	guion.tween_property(titulo, "modulate:a", 1.0, aparicion_titulo)
-	guion.tween_interval(duracion_plano - aparicion_titulo)
+	_guion = create_tween()
+	_guion.tween_property(titulo, "modulate:a", 1.0, aparicion_titulo)
+	_guion.tween_interval(duracion_plano - aparicion_titulo)
 	# El control vuelve AQUI, mientras la camara todavia se esta moviendo: por eso
 	# no hay corte y el jugador no sabe en que momento empezo a jugar.
-	guion.tween_callback(_devolver_control)
-	guion.set_parallel(true)
-	guion.tween_property(titulo, "modulate:a", 0.0, duracion_retorno * 0.6)
+	_guion.tween_callback(_devolver_control)
+	_guion.set_parallel(true)
+	_guion.tween_property(titulo, "modulate:a", 0.0, duracion_retorno * 0.6)
 	if _camara != null:
-		guion.tween_property(_camara, "zoom", zoom_normal, duracion_retorno) \
+		_guion.tween_property(_camara, "zoom", _zoom_normal, duracion_retorno) \
 			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		guion.tween_property(_camara, "offset", desplazamiento_normal, duracion_retorno) \
+		# La MISMA propiedad que se movio arriba. Antes aqui se animaba "offset",
+		# que CamaraJugador pisa cada frame: offset_base se quedaba en el encuadre
+		# de la apertura y la camara iba 70 px desplazada el nivel entero, con el
+		# personaje pegado al borde de abajo.
+		_guion.tween_property(_camara, _propiedad, _desplazamiento_normal, duracion_retorno) \
 			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _devolver_control() -> void:
 	jugador.fijar_control(true)
 	control_devuelto.emit()
+
+## Corta la apertura en seco y deja la camara como estaba. La usa Nivel al
+## retomar una partida: para entonces _ready() ya habia alejado la camara, y
+## borrar el nodo sin mas la dejaba con el zoom de la apertura para siempre.
+func cancelar() -> void:
+	if _guion != null and _guion.is_valid():
+		_guion.kill()
+	if _camara != null:
+		_camara.zoom = _zoom_normal
+		_camara.set(_propiedad, _desplazamiento_normal)
+	if jugador != null:
+		jugador.fijar_control(true)
+	queue_free()

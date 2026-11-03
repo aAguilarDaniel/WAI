@@ -205,16 +205,13 @@ func _fijar_encendido(valor: float) -> void:
 func _guardar() -> void:
 	if _jugador == null:
 		return
-	var ids: Array[String] = []
-	for arma: ArmaData in _jugador.arma.arsenal:
-		ids.append(arma.id)
-	var equipada: ArmaData = _jugador.arma.arma_actual()
-	Guardado.guardar(checkpoint_id, {
-		"salud": _jugador.salud.salud_actual,
-		"vendas": _jugador.vendas,
-		"armas": ids,
-		"arma_equipada": equipada.id if equipada != null else "",
-	})
+	var datos: Dictionary = _jugador.instantanea()
+	# En que nivel esta la terminal: "Seguir donde estaba" tiene que abrir ESE
+	# nivel, no siempre el primero.
+	var nivel: Node = get_tree().get_first_node_in_group("nivel")
+	if nivel != null:
+		datos["nivel"] = nivel.scene_file_path
+	Guardado.guardar(checkpoint_id, datos)
 
 func _al_entrar(cuerpo: Node2D) -> void:
 	var jugador: Jugador = cuerpo as Jugador

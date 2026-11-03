@@ -462,6 +462,98 @@ Reportadas jugando, las tres invisibles desde el código:
   vez de empujarlo hacia lo humano.
 - **Repararse en una terminal** (§3.1). Las vendas existen; la reparación no.
 
+### Nivel 2, edificio y pulido visual (sesión del 2026-11-02)
+
+Pedido: mejorar el aspecto, organizar mejor el proyecto y añadir un segundo nivel
+**dentro del edificio** en el que termina el nivel 1. Se hizo fuera del orden de
+`docs/HITOS.md` (el nivel 2 no está en ningún hito) porque lo pidió el equipo.
+
+#### Lo que estaba roto y no daba error
+
+1. **La cámara iba 70 px desplazada durante todo el nivel 1.** `AperturaSadak`
+   movía `offset_base` al empezar pero al terminar animaba `offset`, que
+   `CamaraJugador` pisa cada frame. `offset_base` se quedaba en el encuadre de la
+   apertura y el personaje jugaba pegado al borde de abajo. Ahora anima la misma
+   propiedad que movió.
+2. **"Seguir donde estaba" dejaba la cámara con el zoom de la apertura.** `Nivel`
+   borraba la apertura en su `_ready()`, que corre *después* del de la apertura:
+   para entonces ya había alejado la cámara. Ahora `AperturaSadak.cancelar()` la
+   devuelve a su sitio.
+3. **"Despertar" heredaba la partida anterior.** `EstadoJuego` y `Alma` son
+   autoloads y no se reinician al cambiar de escena: armas, banderas, entradas del
+   diario y el eje pasaban de una partida a la siguiente. `EstadoJuego.reiniciar()`.
+4. **La tabla de calibración de `Alma` estaba mal.** `registrar()` recorta cada
+   acción a 0.03 *después* de aplicar `ESCALA`, así que matar a los 9 del nivel 1
+   con el tubo daba +0.27, no +0.45: **ningún umbral se cruzaba con solo el
+   nivel 1**. Con los dos niveles (15 enemigos) se llega a ±0.45. Ver
+   "Pendiente de decisión".
+5. **El "·" no existe en la fuente bitmap.** El pie del menú lo usaba y salía un
+   recuadro. Se cambió por "/".
+
+#### Organización
+
+- **`tools/constructor_nivel.gd`**: lo común de los generadores (tileset, fondo,
+  parallax, objetos, luces, guardar la escena). Cada `generar_nivel_XX.gd` es solo
+  sus tablas. Antes todo vivía dentro del generador del nivel 1.
+- **Un tileset para los dos niveles**: `levels/comun/tileset_mundo.tres` sobre
+  `art/placeholder/tileset_mundo.png` (8x2 celdas, exterior e interior). Las celdas
+  tienen nombre en `ConstructorNivel` (`EXT_VIGA`, `INT_PASARELA`...). El viejo
+  `tileset_caja` se borró.
+- **El jugador viaja entre niveles como diccionario**: `Jugador.instantanea()` /
+  `Jugador.restaurar()`. Lo usan la puerta, la terminal y la carga de partida, que
+  antes tenían cada una su copia del código.
+- **El guardado lleva `"nivel"`** y el menú abre ese nivel al continuar. Campo
+  opcional: las partidas viejas se leen como del nivel 1, `save_version` sigue en 1.
+- **`Nivel` tiene `@export` por nivel**: ambiente, volumen y `encuadre_camara`
+  (se aplica en `_enter_tree()` para que la cámara y la apertura ya lo vean en sus
+  `_ready()`).
+
+#### Cosas nuevas
+
+- **El edificio** al final del nivel 1 (`edificio_fachada.png`, 224x352): catedral
+  de servidores con un rosetón que es un ventilador y el portal como única luz
+  verde. Se cruza **andando** (`PuertaNivel`): pedir una tecla sería un menú.
+- **Nivel 2** (`tools/generar_nivel_02.gd`): se describe por los HUECOS que se
+  excavan en un macizo, y cada celda elige su aspecto por sus vecinas. Siete
+  tramos documentados en `juego/README.md`.
+- **`ArcoElectrico`**: peligro con aviso/descarga/descanso, mismo idioma que el
+  enemigo. **`PlataformaMovil`**: montacargas y plataforma del foso. **Pasarelas**
+  de un solo sentido en el tileset.
+- **La pistola reciclada está en el mundo** (pedestal del vestíbulo del nivel 2).
+  Antes no se podía conseguir jugando.
+- **Objetos de escenario y luces** en los dos niveles (`LuzParpadeante`: respira,
+  parpadea o está averiada). El suelo del nivel 1 tiene estratos en vez de ser la
+  misma celda hasta el fondo.
+- **Muerte del enemigo**: fogonazo, se inclina, se desploma y se apaga. Deja de
+  hacer daño en el mismo frame. Resuelve el pendiente de la lista de abajo.
+- **`ui/fin/fin_demo.tscn`**: cierre de la rebanada vertical (estadísticas del
+  diario y créditos con las referencias). **No es un final**: los finales por ruta
+  son el Hito 8 y su texto es del equipo. No muestra el eje.
+- Audio: `ambiente_interior`, `arco`, `aviso_arco`, `puerta`.
+- Herramientas: `tools/foto.tscn` (fotos de cualquier nivel por columnas) y
+  `tools/prueba_nivel_02.tscn` (13 comprobaciones del paso entre niveles y de las
+  mecánicas nuevas, todas pasan).
+
+### Fuente y música del nivel 2 (sesión del 2026-11-03)
+
+- **Fuente de la interfaz: `ui/fuentes/adventurer.ttf`** (Adventurer, de Brian J.
+  Smith), puesta en `ui/tema_wai.tres` como `default_font`. Importada sin
+  antialiasing, sin hinting y sin posicionamiento subpíxel. **Su tamaño nativo es
+  16 px**: el tema base pasa de 12 a 16 y los títulos siguen en 24. A 8 o 12 los
+  glifos se deforman. Es más ancha que la bitmap 5×7, así que la pantalla de fin
+  de la demo se recolocó (créditos en cuatro líneas).
+- **Las tres fuentes del diario no se tocaron**: son el medidor del eje (§3.3) y
+  cambian con `Alma`. Para usar Adventurer también ahí, se asigna en
+  `fuente_humana` / `fuente_hibrida` / `fuente_maquina` del nodo `TipografiaAlma`.
+- **Música del nivel 2: `audio/musica/bruh_150.mp3`** (de la carpeta `ost` del
+  equipo), en bucle por su `.import` (`loop=true`). Suena **encima** del ambiente
+  `ambiente_interior`, en un reproductor aparte de `DirectorAudio`
+  (`musica()` / `parar_musica()`), por el bus `Musica`: la escena del CRT la
+  silencia igual que antes. `Nivel` tiene `@export var musica: AudioStream`; el
+  nivel 1 no lleva, y el menú y el fin la paran. Cambiar de canción es cambiar ese
+  recurso (también en `tools/generar_nivel_02.gd`, que la vuelve a poner al
+  regenerar).
+
 ### Pendiente de decisión del equipo
 
 - ~~**Calibrar `Alma.ESCALA`**~~ → hecho: 2.5, con el nivel 1 cerrado a 9 enemigos.
@@ -477,5 +569,12 @@ Reportadas jugando, las tres invisibles desde el código:
 - **Los iconos de arma no se ven en ninguna parte.** La pestaña Arsenal del diario
   es solo texto, así que el campo `sprite` de los `.tres` no se dibuja. O se pintan
   los iconos en el Arsenal, o esa fila de `art/PLACEHOLDERS.md` sobra.
-- **El enemigo no tiene animación de muerte**: `queue_free()` y desaparece. En los
-  planos de combate del tráiler se nota.
+- ~~**El enemigo no tiene animación de muerte**~~ → hecho: se apaga y se desploma.
+- **Calibración del eje con los dos niveles.** El recorte de 0.03 por acción manda
+  sobre `ESCALA`: hacen falta 14 muertes del mismo bando (de 15) para cruzar un
+  umbral, y con la pistola no se llega. Opciones: subir `CAMBIO_MAXIMO`, bajar los
+  umbrales o añadir enemigos. Tabla en `juego/README.md`.
+- **Qué es una "zona"** sigue abierto, pero ahora hay un candidato natural: cada
+  nivel. `PuertaNivel` sería el sitio para llamar a `registrar_zona_pacifica()`.
+- **El texto del ascensor y del santuario** del nivel 2: no hay ninguno. Si el
+  santuario de monitores tiene que decir algo, es contenido narrativo del equipo.

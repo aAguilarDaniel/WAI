@@ -11,7 +11,8 @@ Si tocan uno a mano, la próxima vez que corran el script lo pisan.
 
 | Script | Qué produce |
 |---|---|
-| `generar_siluetas.py` | Las 6 capas de parallax, el tileset, el foso y el CRT |
+| `generar_siluetas.py` | Las 6 capas de parallax del exterior, el foso y el CRT |
+| `generar_mundo.py` | El tileset de los dos niveles, los objetos de escenario, la fachada del edificio y las 4 capas del interior |
 | `generar_jugador.py` | El spritesheet animado del protagonista |
 | `generar_props.py` | Enemigo, proyectiles, recogibles, corazón del HUD |
 | `generar_sprite_frames.py` | Los `.tres` de `SpriteFrames` del jugador y del enemigo |
@@ -21,6 +22,7 @@ Si tocan uno a mano, la próxima vez que corran el script lo pisan.
 
 ```
 python herramientas/generar_siluetas.py --contacto
+python herramientas/generar_mundo.py --contacto
 python herramientas/generar_jugador.py --contacto
 python herramientas/generar_props.py --contacto
 python herramientas/generar_sprite_frames.py
@@ -179,19 +181,70 @@ Las cuatro reglas de `ARTE.md` §3, en forma de checklist:
 Y la regla dura: **el jugador nunca debe confundir fondo con plataforma.** Si hay
 duda, bajenle contraste al fondo. Las capas 1 a 3 casi monocromas.
 
-### Tileset del nivel
+### Tileset de los dos niveles
 
 | Ruta final | Tamano | Celdas | Descripcion | Estado |
 |---|---|---|---|---|
-| `art/final/tilesets/nivel_01.png` | 16 px por celda | 4+ | Escombros de infraestructura | pendiente |
+| `art/final/tilesets/mundo.png` | **128x32** (16 px por celda) | 16 | Exterior (fila 0) e interior (fila 1) | **placeholder generado** |
 
-El placeholder (`art/placeholder/tileset_caja.png`) tiene 4 celdas de 16x16:
-0 solida, 1 superficie (con colision), 2 relleno **sin colision**, 3 tierra.
+`art/placeholder/tileset_mundo.png`, de `herramientas/generar_mundo.py`. Lo usan
+los dos niveles a traves de `levels/comun/tileset_mundo.tres`. **La posicion de cada
+celda es la definitiva**: el codigo las nombra en `tools/constructor_nivel.gd`.
 
-Para reemplazarlo hace falta editar el `TileSet` en el editor (asignar la textura
-nueva y redibujar las colisiones), o cambiar la textura en
-`tools/generar_nivel_01.gd` y **regenerar** — ojo: regenerar **pisa** el nivel y
-se pierde lo que hayan editado a mano.
+| Celda | Exterior (fila 0) | Interior (fila 1) |
+|---|---|---|
+| 0 | Escombro solido | Suelo de chapa con canto iluminado |
+| 1 | Superficie con ceja | Muro de paneles |
+| 2 | Relleno, **sin colision** | Muro con rejilla |
+| 3 | Viga de acero (plataformas sueltas) | Pasarela de rejilla, **un solo sentido** (4 px de arriba) |
+| 4 | Profundo, **sin colision** | Techo (labio de abajo iluminado) |
+| 5 | Superficie con zanja de cables | Relleno, **sin colision** |
+| 6 | Solida con tubo (va en tramos) | Suelo con franjas de peligro |
+| 7 | Solida con placa base | Bloque de rack |
+
+Reemplazar el PNG con las mismas celdas en el mismo sitio no toca nada. Si cambian
+de sitio, hay que tocar las constantes de `constructor_nivel.gd` y **regenerar**
+los niveles (y regenerar **pisa** lo editado a mano).
+
+### Objetos de escenario y fachada (`art/placeholder/props/`)
+
+Todos de `herramientas/generar_mundo.py`. Se apoyan por el **centro de su borde
+inferior**, asi que cualquier tamano nuevo sigue posandose en el suelo. Las luces
+de cada uno estan encajadas a mano en los generadores de nivel: si se redibuja un
+objeto con la bombilla en otro sitio, hay que mover su luz alli.
+
+| Ruta final | Tamano (px) | Frames | Descripcion | Estado |
+|---|---|---|---|---|
+| `art/final/escenario/edificio_fachada.png` | 224x352 | 1 | Fachada del final del nivel 1. Portal de 32x48 en el centro | **placeholder generado** |
+| `art/final/escenario/farola.png` | 12x48 | 1 | Farola doblada. Bombilla en (8-10, 9) | **placeholder generado** |
+| `art/final/escenario/poste.png` | 12x64 | 1 | Poste de cables con aisladores | **placeholder generado** |
+| `art/final/escenario/cartel.png` | 40x30 | 1 | Neon roto, sin letras. Ojo en (13, 8) | **placeholder generado** |
+| `art/final/escenario/chatarra.png` | 32x12 | 1 | Escombros con carcasa de monitor | **placeholder generado** |
+| `art/final/escenario/barril.png` | 10x14 | 1 | Barril oxidado | **placeholder generado** |
+| `art/final/escenario/servidor_caido.png` | 30x14 | 1 | Rack volcado. Led en (6, 7) | **placeholder generado** |
+| `art/final/escenario/valla.png` | 36x18 | 1 | Barandilla rota | **placeholder generado** |
+| `art/final/escenario/rack.png` | 24x56 | 1 | Armario de servidores en pie | **placeholder generado** |
+| `art/final/escenario/consola.png` | 32x22 | 1 | Mesa con terminal y teclado | **placeholder generado** |
+| `art/final/escenario/lampara.png` | 10x40 | 1 | Lampara colgante con cadena | **placeholder generado** |
+| `art/final/escenario/muro_monitores.png` | 112x72 | 1 | El santuario del final del nivel 2 | **placeholder generado** |
+| `art/final/escenario/ventanal.png` | 40x96 | 1 | Ventanal gotico roto con la brasa detras | **placeholder generado** |
+| `art/final/escenario/tuberia.png` | 64x10 | 1 | Tuberia de pared | **placeholder generado** |
+| `art/final/escenario/ascensor.png` | 40x60 | 1 | La salida del nivel 2 | **placeholder generado** |
+| `art/final/peligros/emisor_arco.png` | 12x10 | 1 | Nodo del arco electrico (se voltea para el techo) | **placeholder generado** |
+| `art/final/peligros/montacargas.png` | 48x12 | 1 | Plataforma movil. Colision 48x6 arriba | **placeholder generado** |
+| `art/final/efectos/cono.png` | 48x64 | 1 | Haz de lampara, **en blanco** (se tine por codigo) | **placeholder generado** |
+
+### Las 4 capas del interior (nivel 2)
+
+`art/placeholder/interior/`, **768x216**, repetidas en horizontal como las del
+exterior. El fondo de todo no es una capa: es `shaders/interior.gdshader`.
+
+| Capa | Archivo | scroll | z | Que va |
+|---|---|---|---|---|
+| 1 | `capa_i1_nave.png` | 0.12 | -50 | La nave: arcada apuntada y ventanales con la brasa |
+| 2 | `capa_i2_racks.png` | 0.32 | -40 | Torres de servidores con leds sueltos |
+| 3 | `capa_i3_columnas.png` | 0.58 | -30 | Columnas cercanas y haces de cable |
+| 4 | `capa_i4_cables.png` | 1.25 | **+20** | Delante del jugador: cables y cadenas colgando |
 
 ### Las fuentes bitmap
 
@@ -203,7 +256,7 @@ antialiasing. Alto de línea 12 px, altura de mayúscula 7: cumple `ARTE.md` §6
 
 | Archivo | Dónde se usa | Carácter |
 |---|---|---|
-| `wai_base.fnt` | Tema global (`ui/tema_wai.tres`): HUD, menú, ajustes | Limpia, sin temblor |
+| `wai_base.fnt` | Ya no la usa el tema global: desde el 2026-11-03 el tema usa `ui/fuentes/adventurer.ttf` (definitiva, del equipo) | Limpia, sin temblor |
 | `wai_humana.fnt` | Diario, ruta humana | Línea base que baila, trazo grueso, tinta |
 | `wai_hibrida.fnt` | Diario, ruta ambigua | Unas letras a mano, otras mecanografiadas |
 | `wai_maquina.fnt` | Diario, ruta máquina | Monoespaciada, espaciado perfecto |

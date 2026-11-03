@@ -9,6 +9,10 @@ const VERSION_GUARDADO: int = 1
 ## user:// apunta a la carpeta de datos del usuario, no a la del juego.
 const RUTA_PARTIDA: String = "user://partida.json"
 
+## Nivel en el que se retoma una partida que no dice cual (las anteriores a que
+## existiera el nivel 2).
+const NIVEL_POR_DEFECTO: String = "res://levels/nivel_01/nivel_01.tscn"
+
 signal partida_guardada(ruta: String)
 signal partida_cargada(datos: Dictionary)
 signal fallo_de_guardado(mensaje: String)
@@ -20,6 +24,9 @@ func guardar(checkpoint_id: String, datos_jugador: Dictionary) -> bool:
 		"save_version": VERSION_GUARDADO,
 		"fecha": Time.get_datetime_string_from_system(false, true),
 		"checkpoint_id": checkpoint_id,
+		# Escena del nivel de la terminal. Campo nuevo pero opcional: una partida
+		# sin el se lee como del nivel 1, asi que no hace falta subir la version.
+		"nivel": str(datos_jugador.get("nivel", NIVEL_POR_DEFECTO)),
 		"alma": Alma.valor(),
 		"salud": int(datos_jugador.get("salud", 0)),
 		"vendas": int(datos_jugador.get("vendas", 0)),
@@ -46,6 +53,24 @@ func hay_partida() -> bool:
 ## Lee y valida la partida. Devuelve un diccionario vacío si no hay o no sirve.
 ## Aplica lo que le corresponde a Alma y EstadoJuego; el resto lo aplica quien llama.
 func cargar() -> Dictionary:
+	var datos: Dictionary = _leer()
+	if datos.is_empty():
+		return {}
+	Alma.cargar(float(datos.get("alma", 0.0)))
+	EstadoJuego.cargar(datos)
+	partida_cargada.emit(datos)
+	return datos
+
+## Escena del nivel en el que quedó la partida. NO aplica nada: el menú lo
+## necesita para saber qué escena abrir antes de que exista el nivel.
+func nivel_guardado() -> String:
+	var ruta: String = str(_leer().get("nivel", NIVEL_POR_DEFECTO))
+	if not ResourceLoader.exists(ruta):
+		return NIVEL_POR_DEFECTO
+	return ruta
+
+## Lee el archivo y comprueba la versión, sin efectos sobre el resto del juego.
+func _leer() -> Dictionary:
 	if not hay_partida():
 		return {}
 	var archivo: FileAccess = FileAccess.open(RUTA_PARTIDA, FileAccess.READ)
@@ -61,9 +86,6 @@ func cargar() -> Dictionary:
 	var datos: Dictionary = resultado
 	if not _version_valida(datos):
 		return {}
-	Alma.cargar(float(datos.get("alma", 0.0)))
-	EstadoJuego.cargar(datos)
-	partida_cargada.emit(datos)
 	return datos
 
 func borrar() -> void:

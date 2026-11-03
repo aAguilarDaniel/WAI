@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bor4aknp5d2ck"
-path="res://.godot/imported/tileset_caja.png-767dc3bf6a6cd409ff5bc23ecb1098b9.ctex"
+uid="uid://b1slvtduwpnp2"
+path="res://.godot/imported/consola.png-89a1a7ea80d7cfee8dba98bf4f40aa1e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/placeholder/tileset_caja.png"
-dest_files=["res://.godot/imported/tileset_caja.png-767dc3bf6a6cd409ff5bc23ecb1098b9.ctex"]
+source_file="res://art/placeholder/props/consola.png"
+dest_files=["res://.godot/imported/consola.png-89a1a7ea80d7cfee8dba98bf4f40aa1e.ctex"]
 
 [params]
 

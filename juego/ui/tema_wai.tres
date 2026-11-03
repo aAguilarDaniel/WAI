@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=9 format=3]
 
-[ext_resource type="FontFile" path="res://ui/diario/fuentes/wai_base.fnt" id="1_base"]
+[ext_resource type="FontFile" uid="uid://bj5lsshwjpsr8" path="res://ui/fuentes/adventurer.ttf" id="1_base"]
 
 [sub_resource type="StyleBoxFlat" id="Panel_libro"]
 bg_color = Color(0.055, 0.043, 0.055, 0.94)
@@ -59,7 +59,7 @@ content_margin_bottom = 2.0
 
 [resource]
 default_font = ExtResource("1_base")
-default_font_size = 12
+default_font_size = 16
 Button/colors/font_color = Color(0.68, 0.6, 0.55, 1)
 Button/colors/font_disabled_color = Color(0.32, 0.28, 0.28, 1)
 Button/colors/font_focus_color = Color(1, 0.87, 0.65, 1)

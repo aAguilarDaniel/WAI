@@ -293,6 +293,48 @@ func recoger_venda(cantidad: int = 1) -> void:
 	vendas = mini(vendas_maximas, vendas + cantidad)
 	vendas_cambiadas.emit(vendas)
 
+# --- Lo que lleva encima ---
+# Lo usan TerminalCRT al guardar y PuertaNivel al cambiar de nivel: el nodo
+# Jugador muere con la escena, asi que lo que lleva encima viaja como diccionario.
+
+## Salud, vendas y arsenal, con ids de arma en vez de recursos para que se pueda
+## escribir tal cual en el JSON de guardado.
+func instantanea() -> Dictionary:
+	var ids: Array[String] = []
+	for propia: ArmaData in arma.arsenal:
+		ids.append(propia.id)
+	var equipada: ArmaData = arma.arma_actual()
+	return {
+		"salud": salud.salud_actual,
+		"vendas": vendas,
+		"armas": ids,
+		"arma_equipada": equipada.id if equipada != null else "",
+	}
+
+## Lo contrario de instantanea(). Las claves que falten se quedan como estaban.
+func restaurar(datos: Dictionary) -> void:
+	vendas = int(datos.get("vendas", vendas))
+	vendas_cambiadas.emit(vendas)
+	var salud_guardada: int = int(datos.get("salud", 0))
+	if salud_guardada > 0:
+		salud.salud_actual = mini(salud_guardada, salud.salud_maxima)
+		salud.salud_cambiada.emit(salud.salud_actual, salud.salud_maxima)
+	_restaurar_arsenal(datos.get("armas", []), str(datos.get("arma_equipada", "")))
+
+## Vuelve a meter en el arsenal las armas que ya tenia, por id. Se recorre la
+## carpeta y no una lista escrita a mano: agregar un .tres nuevo sigue sin
+## obligar a tocar codigo (CLAUDE.md §3.2).
+func _restaurar_arsenal(ids: Array, equipada: String) -> void:
+	if ids.is_empty():
+		return
+	for disponible: ArmaData in ComponenteArma.cargar_carpeta(arma.carpeta_armas):
+		if ids.has(disponible.id):
+			arma.obtener(disponible)
+	for i: int in arma.arsenal.size():
+		if arma.arsenal[i].id == equipada:
+			arma.equipar(i)
+			return
+
 # --- Control externo (la TerminalCRT lo usa durante su escena) ---
 
 ## Devuelve o quita el control al jugador sin sacarlo del árbol.

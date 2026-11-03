@@ -13,18 +13,43 @@ extends Node2D
 ## Cuanto se deja ver por debajo, antes de la ZonaMortal.
 @export var margen_inferior: int = 120
 
+## Desplazamiento de la camara respecto del jugador. Negativo = mas aire encima.
+## En el exterior se sube para que el cielo mande y no medio cuadro de relleno de
+## suelo; en el interior casi centrado, porque hay techo.
+@export var encuadre_camara: Vector2 = Vector2(0.0, -40.0)
+
+@export_group("Audio")
+## Bucle de ambiente del nivel, por nombre de archivo en audio/.
+@export var ambiente: String = "ambiente"
+@export var volumen_ambiente: float = -13.0
+## Cancion del nivel, en bucle encima del ambiente. Vacio = el nivel va sin
+## musica (y corta la del nivel anterior si venia sonando).
+@export var musica: AudioStream = null
+@export var volumen_musica: float = -8.0
+
 @onready var terreno: TileMapLayer = $Terreno
+
+## En _enter_tree y no en _ready: los _ready() de los hijos corren antes, y tanto
+## CamaraJugador (que copia offset a offset_base) como la apertura (que guarda el
+## encuadre al que volver) tienen que encontrarse ya el valor del nivel.
+func _enter_tree() -> void:
+	var camara: Camera2D = get_node_or_null("Jugador/Camara") as Camera2D
+	if camara != null:
+		camara.offset = encuadre_camara
 
 func _ready() -> void:
 	# Efectos busca por este grupo el nodo del que colgar chispas y polvo: si
 	# colgaran de quien los pide, un enemigo que muere se llevaria su propia
 	# explosion por delante.
 	add_to_group("nivel")
-	DirectorAudio.ambiente("ambiente", -13.0)
+	DirectorAudio.ambiente(ambiente, volumen_ambiente)
+	DirectorAudio.musica(musica, volumen_musica)
 	_ajustar_limites_de_camara()
 	if CargadorEscenas.continuar_partida:
 		CargadorEscenas.continuar_partida = false
 		_aplicar_partida_guardada()
+	elif not CargadorEscenas.datos_en_transito.is_empty():
+		_aplicar_transito()
 
 func _ajustar_limites_de_camara() -> void:
 	if terreno == null or terreno.tile_set == null:
@@ -54,39 +79,26 @@ func _aplicar_partida_guardada() -> void:
 		var sitio: Vector2 = terminal.global_position + terminal.sitio_del_jugador
 		jugador.global_position = sitio
 		jugador.punto_de_reaparicion = sitio
-		# La apertura de Sadak es la primera imagen del juego: no tiene sentido
-		# repetirla al retomar una partida a mitad del nivel.
-		var apertura: Node = get_node_or_null("AperturaSadak")
+		# La apertura es la primera imagen del nivel: no tiene sentido repetirla
+		# al retomar una partida a mitad de camino.
+		_quitar_apertura(jugador)
+	jugador.restaurar(datos)
+
+## Recien llegado por una PuertaNivel: trae la salud, las vendas y las armas del
+## nivel anterior. La apertura del nivel SI se ve: es la entrada al edificio.
+func _aplicar_transito() -> void:
+	var datos: Dictionary = CargadorEscenas.datos_en_transito
+	CargadorEscenas.datos_en_transito = {}
+	var jugador: Jugador = _jugador()
+	if jugador != null:
+		jugador.restaurar(datos)
+
+func _quitar_apertura(jugador: Jugador) -> void:
+	for hijo: Node in get_children():
+		var apertura: AperturaSadak = hijo as AperturaSadak
 		if apertura != null:
-			apertura.queue_free()
-			jugador.fijar_control(true)
-
-	jugador.vendas = int(datos.get("vendas", jugador.vendas))
-	jugador.vendas_cambiadas.emit(jugador.vendas)
-	var salud_guardada: int = int(datos.get("salud", 0))
-	if salud_guardada > 0:
-		jugador.salud.salud_actual = mini(salud_guardada, jugador.salud.salud_maxima)
-		jugador.salud.salud_cambiada.emit(jugador.salud.salud_actual,
-			jugador.salud.salud_maxima)
-
-	_restaurar_arsenal(jugador, datos)
-
-## Vuelve a meter en el arsenal las armas que ya tenia, por id. Se recorre la
-## carpeta y no una lista escrita a mano: agregar un .tres nuevo sigue sin
-## obligar a tocar codigo (CLAUDE.md §3.2).
-func _restaurar_arsenal(jugador: Jugador, datos: Dictionary) -> void:
-	var ids: Array = datos.get("armas", [])
-	if ids.is_empty():
-		return
-	var todas: Array[ArmaData] = ComponenteArma.cargar_carpeta(jugador.arma.carpeta_armas)
-	var equipada: String = str(datos.get("arma_equipada", ""))
-	for arma: ArmaData in todas:
-		if ids.has(arma.id):
-			jugador.arma.obtener(arma)
-	for i: int in jugador.arma.arsenal.size():
-		if jugador.arma.arsenal[i].id == equipada:
-			jugador.arma.equipar(i)
-			return
+			apertura.cancelar()
+	jugador.fijar_control(true)
 
 func _jugador() -> Jugador:
 	return get_tree().get_first_node_in_group("jugador") as Jugador

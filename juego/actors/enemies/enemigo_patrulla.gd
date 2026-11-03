@@ -259,4 +259,30 @@ func _al_morir(_fuente: Node) -> void:
 	Efectos.restos(self, global_position + Vector2(0.0, -10.0))
 	Impacto.muerte(0.8)
 	DirectorAudio.efecto_variado("rotura", -5.0)
-	queue_free()
+	_apagarse()
+
+## Antes hacia queue_free() y desaparecia en el acto: en los planos de combate
+## del trailer se notaba (CLAUDE.md §7, pendiente). Ahora deja de ser peligroso
+## en el mismo frame, pero el cuerpo se queda medio segundo: el tubo da un ultimo
+## fogonazo, se inclina hacia atras, se desploma y se apaga.
+func _apagarse() -> void:
+	set_physics_process(false)
+	collision_layer = 0
+	contacto.set_deferred("monitoring", false)
+	vision.set_deferred("monitoring", false)
+	var hurtbox: Area2D = get_node_or_null("Hurtbox") as Area2D
+	if hurtbox != null:
+		hurtbox.set_deferred("monitorable", false)
+	sprite.stop()
+	sprite.modulate = Color(2.6, 2.6, 2.6)
+	brillo.modulate = Color(0.6, 1.0, 0.7, 1.0)
+	var caida: float = -1.0 if sprite.flip_h else 1.0
+	var final: Tween = create_tween()
+	final.tween_property(sprite, "modulate", Color(0.45, 0.4, 0.45), 0.12)
+	final.parallel().tween_property(brillo, "modulate:a", 0.0, 0.3)
+	final.tween_property(sprite, "rotation", -caida * 1.45, 0.32) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	final.parallel().tween_property(sprite, "position:y", -4.0, 0.32)
+	final.tween_interval(0.35)
+	final.tween_property(sprite, "modulate:a", 0.0, 0.4)
+	final.tween_callback(queue_free)

@@ -29,6 +29,9 @@ var _efectos: Dictionary = {}
 var _reproductores: Array[AudioStreamPlayer] = []
 var _siguiente: int = 0
 var _ambiente: AudioStreamPlayer = null
+## La musica va en su propio reproductor y no en el del ambiente: el zumbido del
+## nivel tiene que seguir sonando debajo de la cancion, no ser sustituido por ella.
+var _musica: AudioStreamPlayer = null
 
 func _ready() -> void:
 	# El audio no se para con el juego: la pausa del diario dejaba el ambiente
@@ -53,6 +56,10 @@ func _ready() -> void:
 	_ambiente.bus = "Musica"
 	_ambiente.volume_db = -12.0
 	add_child(_ambiente)
+
+	_musica = AudioStreamPlayer.new()
+	_musica.bus = "Musica"
+	add_child(_musica)
 
 ## Carga todos los .wav de audio/ por su nombre sin extension. Soltar un archivo
 ## nuevo ahi basta para poder pedirlo: no hay ninguna lista que actualizar.
@@ -103,6 +110,33 @@ func ambiente(nombre: String = "ambiente", volumen_db: float = -12.0) -> void:
 func parar_ambiente() -> void:
 	if _ambiente != null:
 		_ambiente.stop()
+
+## Arranca la musica del nivel. El bucle lo pone la importacion del archivo
+## (loop=true en su .import), no el codigo: cambiar de cancion es cambiar el
+## recurso. Si ya esta sonando la misma no la reinicia, asi morir y reaparecer
+## no la corta a medias.
+func musica(flujo: AudioStream, volumen_db: float = -8.0) -> void:
+	if _musica == null:
+		return
+	if flujo == null:
+		parar_musica()
+		return
+	if _musica.stream == flujo and _musica.playing:
+		_musica.volume_db = volumen_db
+		return
+	_musica.stream = flujo
+	_musica.volume_db = volumen_db
+	_musica.play()
+
+func parar_musica() -> void:
+	if _musica != null:
+		_musica.stop()
+		_musica.stream = null
+
+func sonando_musica() -> AudioStream:
+	if _musica == null or not _musica.playing:
+		return null
+	return _musica.stream
 
 # --- Mezcla ---
 

@@ -82,6 +82,21 @@ func tiempo_formateado() -> String:
 		return "%dh %02dm %02ds" % [horas, minutos, segundos]
 	return "%dm %02ds" % [minutos, segundos]
 
+## Vuelve a cero para una partida nueva. Sin esto, "Despertar" despues de haber
+## jugado heredaba armas, banderas y estadisticas de la partida anterior, porque
+## un autoload no se reinicia al cambiar de escena.
+func reiniciar() -> void:
+	banderas = {}
+	armas_obtenidas.clear()
+	entradas.clear()
+	estadisticas = {
+		"muertes": 0,
+		"enemigos_eliminados": 0,
+		"enemigos_evitados": 0,
+		"tiempo_seg": 0,
+	}
+	_tiempo_acumulado = 0.0
+
 ## Restaura el progreso al cargar una partida.
 func cargar(datos: Dictionary) -> void:
 	banderas = datos.get("flags", {}).duplicate()

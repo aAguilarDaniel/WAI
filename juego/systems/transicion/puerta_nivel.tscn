@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://systems/transicion/puerta_nivel.gd" id="1_puerta"]
+
+[sub_resource type="RectangleShape2D" id="Forma_puerta"]
+size = Vector2(20, 40)
+
+[node name="PuertaNivel" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_puerta")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -20)
+shape = SubResource("Forma_puerta")

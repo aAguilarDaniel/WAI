@@ -17,7 +17,9 @@ en Proyecto → Ajustes → Rendering → Renderer.
 
 1. Abrir Godot → **Importar** → seleccionar `juego/project.godot`.
 2. **F5**. La escena principal es `ui/menu/menu_principal.tscn`. Desde ahí,
-   *DESPERTAR* entra al nivel 1.
+   *DESPERTAR* entra al nivel 1. El nivel 1 termina en el portal de un edificio,
+   que lleva al nivel 2 (el interior), y el nivel 2 termina en la pantalla de fin
+   de la demo.
 
 Sin abrir el editor:
 
@@ -228,20 +230,25 @@ el código, que es lo que pide `CLAUDE.md` §4.
 
 Ninguna acción mueve el eje más de `CAMBIO_MAXIMO` (0.03), aplicado con `clamp`.
 
-**`Alma.ESCALA` está calibrada a 2.5** contra el nivel 1 ya cerrado. Con 1.0 hacían
-falta entre 13 y 40 muertes para cruzar un umbral, y el nivel tiene 9 enemigos: el
-eje no se movía nunca y las tres tipografías del diario no llegaban a verse jugando.
-A 2.5:
+**`Alma.ESCALA` está calibrada a 2.5.** Ojo con la cuenta: `registrar()` multiplica
+el peso por la escala y **después** lo recorta a `CAMBIO_MAXIMO` (0.03, la regla de
+`CLAUDE.md` §3.1). Así que una muerte con tubo, plasma o radiación mueve el eje
+exactamente 0.03, y con la pistola 0.025.
 
-| Cómo se juega el nivel 1 | Eje al final | Ruta |
+La tabla que había aquí decía que matar a los 9 del nivel 1 con el tubo daba +0.45.
+**No era cierto**: el recorte lo deja en +0.27, que no cruza ningún umbral. Con solo
+el nivel 1, cualquier partida terminaba en ruta ambigua. Con los dos niveles:
+
+| Cómo se juegan los dos niveles (15 enemigos) | Eje al final | Ruta |
 |---|---|---|
-| Matar a los 9 con el tubo de metal (+0.02) | +0.45 | Humano |
-| Matarlos con plasma (−0.02) o radiación (−0.03) | −0.45 a −0.67 | Máquina |
+| Matar a los 15 con el tubo (+0.03 por muerte) | +0.45 | Humano |
+| Matarlos con plasma o radiación (−0.03) | −0.45 | Máquina |
+| Matarlos con la pistola (+0.025) | +0.375 | Ambiguo, por poco |
 | Pasar sin matar a nadie | 0.00 | Ambiguo |
 
-Es decir: **las tres rutas son alcanzables en una sola partida del nivel 1**, que
-es lo que hacía falta para poder enseñar el mecanismo central del juego sin las
-herramientas de captura del tráiler.
+Hacen falta **14 muertes del mismo bando** para cruzar un umbral: alcanzable, pero
+justo. Subir `ESCALA` no cambia nada (manda el recorte); lo que mueve la cuenta es
+`CAMBIO_MAXIMO` o los umbrales. Es decisión del equipo (`CLAUDE.md` §7).
 
 **F3** abre el indicador de depuración del eje. Es temporal: `docs/HITOS.md`
 manda quitarlo en el Hito 8.
@@ -355,9 +362,10 @@ uniforms editables desde el inspector del nodo `Pantalla`.
 
 ## Nivel 1
 
-`levels/nivel_01/nivel_01.tscn`. 216 tiles de ancho (3456 px), 3 checkpoints CRT,
-9 enemigos, 8 recogibles, 4 abismos con `ZonaMortal` debajo y 2 pasillos con
-techo bajo.
+`levels/nivel_01/nivel_01.tscn`. 218 tiles de ancho (216 de recorrido y 2 de muro
+detrás del edificio), 3 checkpoints CRT, 9 enemigos, 8 recogibles, 4 abismos con
+`ZonaMortal` debajo, 2 pasillos con techo bajo, 19 objetos de escenario con sus
+luces y el edificio del final.
 
 ### Es una secuencia de lecciones, no un pasillo con cosas
 
@@ -376,7 +384,8 @@ El nivel enseña **con la forma del terreno**, en este orden, y sin un solo cart
 | 97–99 | Hueco que un salto andando no cubre | Correr |
 | 125–136 | Pasillo bajo con un enemigo que embiste | Rodar |
 | 141–144, 165–168 | Plasma y radiación, arriba y fuera del camino | Que la ruta es tuya |
-| 193–211 | Mirador alto sobre la brasa | Cerrar |
+| 193–201 | Mirador alto sobre la brasa, con el último CRT | Guardar antes de entrar |
+| 202–215 | El edificio. El portal (tile 209) es lo único verde del final | Entrar: se cruza andando y lleva al nivel 2 |
 
 **Los abismos están medidos, no puestos a ojo.** Con `altura_salto` 48,
 `tiempo_subida` 0.35 y `multiplicador_caida` 1.6 son 0.63 s en el aire: andando
@@ -406,6 +415,13 @@ esas cinco reglas, el tramo está mal diseñado. Deja capturas en `capturas/prue
 
 ### Revisar el aspecto sin jugar
 
+`tools/foto.tscn` saca fotos de cualquier nivel en las columnas que se le pidan,
+con el jugador posado en el suelo de cada una:
+
+```
+godot --path juego res://tools/foto.tscn -- --nivel=res://levels/nivel_02/nivel_02.tscn --tiles=10,80,150
+```
+
 Tres herramientas más, para iterar sobre el arte sin tener que llegar jugando
 hasta el sitio. Todas dejan la captura en `capturas/`:
 
@@ -425,7 +441,13 @@ cruzar un umbral jugando cuesta media partida.
 
 ```
 godot --headless --path juego res://tools/generar_nivel_01.tscn
+godot --headless --path juego res://tools/generar_nivel_02.tscn
 ```
+
+Los dos generadores comparten `tools/constructor_nivel.gd`: el tileset (que se
+guarda en `levels/comun/tileset_mundo.tres` y usan los dos niveles), el fondo, el
+parallax, los objetos, las luces y el guardado de la escena. Cada generador es solo
+las tablas de su nivel.
 
 > **Cuidado: regenerar PISA el nivel.** La herramienta genera la *estructura*; la
 > colocacion fina de plataformas y enemigos es diseno de niveles y se hace en el
@@ -433,6 +455,71 @@ godot --headless --path juego res://tools/generar_nivel_01.tscn
 
 Va como escena y no como `--script` a proposito: con `--script` sobre un
 `SceneTree` los autoloads no se instancian y las escenas del juego no compilan.
+
+## Nivel 2: el interior del edificio
+
+`levels/nivel_02/nivel_02.tscn`, generado por `tools/generar_nivel_02.gd`. 192x20
+tiles, 3 checkpoints CRT, 6 enemigos, 4 arcos eléctricos, 2 plataformas móviles,
+la pistola reciclada (la única arma que el nivel 1 no tenía) y 4 vendas.
+
+**Se describe al revés que el nivel 1.** Es un interior: todo es macizo y la tabla
+`HUECOS` dice qué se excava. Cada celda maciza elige su aspecto sola (suelo si
+tiene aire encima, techo si tiene aire debajo, muro o relleno si no), así que las
+tablas son solo forma.
+
+| Tramo | Lo que hay | Lo que enseña |
+|---|---|---|
+| A. Vestíbulo (0–25) | Nave alta, ventanales, CRT, la pistola en un pedestal | Respirar; el arma que faltaba |
+| B. Servidores (26–55) | Pasillo con dos enemigos entre racks | Lo aprendido, sin ayuda |
+| C. Arcos (56–79) | Tres arcos eléctricos desfasados, techo bajo | Leer un aviso y esperar |
+| D. Pozo (80–90) | Montacargas del suelo a la galería | Subir con la máquina |
+| E. Galería (91–131) | CRT, foso con plataforma móvil, dos enemigos con pasarela encima | Esperar el momento; evitar también vale |
+| F. Gran sala (132–162) | Caída, cobertura, pasarela con vendas, último CRT | Todo junto |
+| G. Santuario (163–189) | Un arco más, el muro de monitores, el ascensor | El final de la demo |
+
+### Los peligros nuevos
+
+- **`ArcoElectrico`** (`systems/peligros/`): avisa (chispas y zumbido, 0.6 s),
+  descarga (0.7 s) y descansa (1.6 s). Es el mismo idioma que el enemigo: aviso,
+  golpe, ventana. Hace daño con un `ComponenteHitbox` normal en la capa
+  `hitbox_enemigo`, así que rodar con los i-frames lo atraviesa. Todo `@export`.
+- **`PlataformaMovil`**: va y vuelve con pausa en cada extremo. Se mueve en
+  `_physics_process` (un `AnimatableBody2D` movido con `Tween` hace resbalar al que
+  va encima) y su colisión es de un solo sentido.
+- **Pasarelas de rejilla**: celda del tileset con colisión de un solo sentido en los
+  4 px de arriba. Se suben saltando desde abajo.
+
+### Comprobar que funciona
+
+```
+godot --path juego res://tools/prueba_nivel_02.tscn
+```
+
+Juega sola los momentos críticos y dice PASA o FALLA en cada uno: cruzar el portal
+del nivel 1 conservando armas y vendas, subir en el montacargas, cruzar el foso,
+recibir el arco, salir por el ascensor y "Seguir donde estaba" dentro del nivel 2.
+Respalda `user://partida.json` y lo restaura al terminar.
+
+## Cambiar de nivel
+
+`systems/transicion/puerta_nivel.tscn`. Se cruza **andando**: una puerta que pide
+una tecla sería un menú encima del mundo. El jugador se adentra, se oscurece y
+`CargadorEscenas.ir_a_nivel()` hace el fundido.
+
+El nodo `Jugador` muere con la escena, así que lo que lleva encima viaja como
+diccionario: `Jugador.instantanea()` lo empaqueta (salud, vendas, ids de armas,
+arma equipada), `CargadorEscenas.datos_en_transito` lo guarda y `Nivel._ready()`
+lo aplica con `Jugador.restaurar()`. Es el mismo diccionario que escribe la
+`TerminalCRT` en el JSON de guardado, más el campo `nivel`. `Alma` y `EstadoJuego`
+son autoloads y no necesitan viajar.
+
+**El guardado recuerda el nivel.** El JSON lleva `"nivel"` con la ruta de la escena
+y *Seguir donde estaba* abre esa. Una partida vieja sin el campo se lee como del
+nivel 1, por eso no hizo falta subir `save_version`.
+
+Cada nivel elige en su raíz (`Nivel`) el ambiente, el volumen y el encuadre de la
+cámara (`encuadre_camara`: en el exterior la cámara va 40 px por encima del
+jugador para que mande el cielo; en el interior casi centrada).
 
 ## Parallax
 

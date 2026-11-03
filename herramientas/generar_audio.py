@@ -266,6 +266,73 @@ def menu_aceptar():
     return salida
 
 
+def ambiente_interior(segundos=20.0):
+    """La nave de servidores del nivel 2. Mas cerca y mas electrico que el
+    exterior: la red de 50 Hz y sus armonicos, el soplido de los ventiladores y
+    reles que saltan sueltos. Sin viento: aqui dentro no corre el aire."""
+    n = int(segundos * TASA)
+    rnd = random.Random(2006)
+    salida = [0.0] * n
+    for frec, amp in ((50.0, 0.10), (100.0, 0.07), (150.3, 0.03), (33.0, 0.12), (33.4, 0.10)):
+        fase = rnd.uniform(0, math.tau)
+        for i in range(n):
+            t = i / float(TASA)
+            salida[i] += math.sin(math.tau * frec * t + fase) * amp
+    # Ventiladores: ruido de banda media que late muy despacio.
+    soplido = _ruido(n, rnd, suavizado=12)
+    for i in range(n):
+        t = i / float(TASA)
+        salida[i] += soplido[i] * 0.10 * (0.8 + 0.2 * math.sin(t * 0.5))
+    # Reles: chasquidos secos y lejanos.
+    for _ in range(14):
+        inicio = rnd.randrange(0, n - 2000)
+        env = _sobre(600, 0.0005, 30.0)
+        for i in range(600):
+            salida[inicio + i] += rnd.uniform(-1.0, 1.0) * env[i] * 0.12
+    return _bucle(salida, cruce=1.2)
+
+
+def arco():
+    """Descarga del arco electrico: zumbido de 120 Hz cortado con chasquidos."""
+    n = int(0.55 * TASA)
+    rnd = random.Random(31)
+    env = _sobre(n, 0.004, 3.5)
+    salida = []
+    for i in range(n):
+        t = i / float(TASA)
+        zumbido_red = math.copysign(1.0, math.sin(math.tau * 120.0 * t)) * 0.18
+        chasquido = rnd.uniform(-1.0, 1.0) * (0.55 if rnd.random() < 0.08 else 0.12)
+        salida.append((zumbido_red + chasquido) * env[i])
+    return salida
+
+
+def aviso_arco():
+    """El aviso: un chisporroteo que crece. Es la telegrafia del arco, tiene que
+    oirse antes de que haga dano."""
+    n = int(0.5 * TASA)
+    rnd = random.Random(32)
+    salida = []
+    for i in range(n):
+        t = i / float(n)
+        chispa = rnd.uniform(-1.0, 1.0) if rnd.random() < 0.02 + t * 0.12 else 0.0
+        salida.append(chispa * (0.15 + t * 0.35))
+    return salida
+
+
+def puerta():
+    """Cruzar al siguiente nivel: un golpe grave y un siseo que se apaga."""
+    n = int(1.1 * TASA)
+    rnd = random.Random(33)
+    env = _sobre(n, 0.01, 4.0)
+    siseo = _ruido(n, rnd, suavizado=30)
+    salida = []
+    for i in range(n):
+        t = i / float(TASA)
+        grave = math.sin(math.tau * (55.0 - t * 18.0) * t) * 0.45
+        salida.append((grave + siseo[i] * 0.3) * env[i])
+    return salida
+
+
 def _marcar_bucle(ruta):
     """Escribe el .import del WAV con loop_mode = 1 (hacia adelante)."""
     contenido = (
@@ -286,6 +353,14 @@ def _marcar_bucle(ruta):
         'edit/loop_end=-1\n'
         'compress/mode=0\n'
     ) % os.path.basename(ruta)
+    # Conserva el uid que Godot ya le asigno: si se pierde, Godot inventa otro y
+    # cualquier escena que apunte al sonido por uid queda apuntando a nada.
+    if os.path.exists(ruta + ".import"):
+        for linea in open(ruta + ".import", encoding="utf-8"):
+            if linea.startswith("uid="):
+                contenido = contenido.replace('type="AudioStreamWAV"\n',
+                                              'type="AudioStreamWAV"\n' + linea, 1)
+                break
     f = open(ruta + ".import", "w", encoding="utf-8")
     f.write(contenido)
     f.close()
@@ -295,6 +370,7 @@ if __name__ == "__main__":
     print("Ambiente (en bucle):")
     _marcar_bucle(_guardar("ambiente.wav", ambiente(), bucle=True))
     _marcar_bucle(_guardar("crt_zumbido.wav", zumbido(), bucle=True))
+    _marcar_bucle(_guardar("ambiente_interior.wav", ambiente_interior(), bucle=True))
     print("Efectos:")
     _guardar("salto.wav", salto())
     _guardar("aterrizar.wav", aterrizar())
@@ -304,3 +380,6 @@ if __name__ == "__main__":
     _guardar("recoger.wav", recoger())
     _guardar("menu_mover.wav", menu_mover())
     _guardar("menu_aceptar.wav", menu_aceptar())
+    _guardar("arco.wav", arco())
+    _guardar("aviso_arco.wav", aviso_arco())
+    _guardar("puerta.wav", puerta())

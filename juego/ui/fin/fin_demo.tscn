@@ -1,0 +1,107 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://ui/fin/fin_demo.gd" id="1_fin"]
+[ext_resource type="SpriteFrames" path="res://actors/player/jugador_frames.tres" id="2_frames"]
+[ext_resource type="Texture2D" path="res://art/placeholder/crt/crt_cuerpo.png" id="3_crt"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo_grande.png" id="4_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="5_aditivo"]
+[ext_resource type="Texture2D" path="res://art/placeholder/crt/crt_cable.png" id="6_cable"]
+
+[node name="FinDemo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fin")
+
+[node name="Fondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.035, 0.03, 0.045, 1)
+
+[node name="Escena" type="Node2D" parent="."]
+
+[node name="Suelo" type="ColorRect" parent="Escena"]
+offset_left = 200.0
+offset_top = 150.0
+offset_right = 360.0
+offset_bottom = 151.0
+color = Color(0.29, 0.22, 0.2, 1)
+
+[node name="Halo" type="Sprite2D" parent="Escena"]
+material = ExtResource("5_aditivo")
+modulate = Color(0.42, 0.86, 0.52, 0.55)
+position = Vector2(300, 128)
+scale = Vector2(1.6, 1.4)
+texture = ExtResource("4_brillo")
+
+[node name="Cable" type="Sprite2D" parent="Escena"]
+position = Vector2(284, 148)
+texture = ExtResource("6_cable")
+
+[node name="Monitor" type="Sprite2D" parent="Escena"]
+position = Vector2(300, 136)
+texture = ExtResource("3_crt")
+
+[node name="Pantalla" type="ColorRect" parent="Escena"]
+offset_left = 288.0
+offset_top = 126.0
+offset_right = 312.0
+offset_bottom = 139.0
+color = Color(0.2, 0.42, 0.28, 1)
+
+[node name="Figura" type="AnimatedSprite2D" parent="Escena"]
+position = Vector2(266, 138)
+sprite_frames = ExtResource("2_frames")
+animation = &"quieto"
+
+[node name="Interfaz" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Titulo" type="Label" parent="Interfaz"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 14.0
+offset_right = 360.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(1, 0.878, 0.62, 1)
+theme_override_font_sizes/font_size = 24
+text = "FIN DE LA DEMO"
+
+[node name="Datos" type="Label" parent="Interfaz"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.82, 0.74, 0.62, 1)
+theme_override_constants/line_spacing = -2
+text = "Tiempo"
+
+[node name="Volver" type="Button" parent="Interfaz"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 106.0
+offset_right = 150.0
+offset_bottom = 122.0
+text = "VOLVER AL MENÚ"
+
+[node name="Creditos" type="Label" parent="Interfaz"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 150.0
+offset_right = 380.0
+offset_bottom = 214.0
+theme_override_colors/font_color = Color(0.478, 0.4, 0.376, 1)
+theme_override_constants/line_spacing = -3
+text = "Daniel Felipe Aguilar Latorre
+Juan David Monsalve Niño
+Referencias: John Martin / Nam June Paik
+Zdzislaw Beksinski"

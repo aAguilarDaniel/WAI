@@ -16,6 +16,10 @@ const DURACION: float = 0.45
 ## el menu principal al pulsar Continuar y lo consume levels/nivel.gd.
 var continuar_partida: bool = false
 
+## Lo que el jugador llevaba encima al cruzar una PuertaNivel (salud, vendas,
+## armas). Lo deja ir_a_nivel() y lo consume levels/nivel.gd al entrar.
+var datos_en_transito: Dictionary = {}
+
 var _velo: ColorRect = null
 var _cambiando: bool = false
 
@@ -55,6 +59,15 @@ func cambiar_a(ruta: String) -> void:
 	await _fundir(0.0)
 	_cambiando = false
 	transicion_terminada.emit(ruta)
+
+## Cambia al nivel siguiente llevando lo que el jugador tenia encima. Lo llama
+## PuertaNivel; el nivel de destino lo aplica en su _ready().
+func ir_a_nivel(ruta: String, datos_jugador: Dictionary) -> void:
+	if _cambiando:
+		return
+	datos_en_transito = datos_jugador.duplicate(true)
+	continuar_partida = false
+	cambiar_a(ruta)
 
 ## Funde a negro y cierra el juego.
 func fundir_y_salir() -> void:

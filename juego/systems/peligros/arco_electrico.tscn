@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://systems/peligros/arco_electrico.gd" id="1_arco"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="2_hitbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/props/emisor_arco.png" id="3_emisor"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo_grande.png" id="4_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="5_aditivo"]
+
+[node name="ArcoElectrico" type="Node2D"]
+script = ExtResource("1_arco")
+
+[node name="Brillo" type="Sprite2D" parent="."]
+material = ExtResource("5_aditivo")
+modulate = Color(0.47, 0.91, 0.96, 0)
+z_index = -1
+texture = ExtResource("4_brillo")
+
+[node name="Halo" type="Line2D" parent="."]
+visible = false
+material = ExtResource("5_aditivo")
+width = 4.0
+default_color = Color(0.47, 0.91, 0.96, 0.6)
+
+[node name="Rayo" type="Line2D" parent="."]
+visible = false
+width = 1.0
+default_color = Color(0.92, 1, 1, 1)
+
+[node name="EmisorAbajo" type="Sprite2D" parent="."]
+position = Vector2(0, -5)
+texture = ExtResource("3_emisor")
+
+[node name="EmisorArriba" type="Sprite2D" parent="."]
+position = Vector2(0, -59)
+texture = ExtResource("3_emisor")
+flip_v = true
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("2_hitbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hitbox"]

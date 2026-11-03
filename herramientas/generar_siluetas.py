@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Genera las siluetas de parallax, el tileset, el foso y los assets del CRT.
+"""Genera las siluetas de parallax, el foso y los assets del CRT.
 
 No es pixel art dibujado a mano: es composicion geometrica, que es lo que pide
 ARTE.md §3 ("escala por contraste, no por detalle", "una sola fuente de luz al
@@ -324,53 +324,8 @@ def capa_6_primer_plano():
 
 # ---------- Tileset del terreno ----------
 
-def tileset():
-    """64x16: cuatro celdas de 16x16 (0 solida, 1 superficie, 2 relleno, 3 tierra).
-
-    La celda 1 lleva la CEJA: dos filas calientes en el borde de arriba. Es lo
-    unico que hace que una plataforma se lea como plataforma a contraluz. La
-    version anterior la tenia en (78, 60, 52), que contra un fondo de brasa es
-    invisible; ahora arranca en (186, 116, 54) y cae en dos pasos."""
-    img = Image.new("RGBA", (64, 16), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img)
-    rnd = random.Random(7)
-    tierra = (30, 22, 27, 255)
-
-    def picado(ox, color_base, color_veta):
-        """Dithering irregular, no ruido uniforme (ARTE.md §5)."""
-        for y in range(16):
-            for x in range(16):
-                c = color_base if rnd.random() > 0.22 else color_veta
-                d.point([(ox + x, y)], fill=c)
-
-    def ranuras(ox, color):
-        """Rejilla de rack grabada en la masa. Sin esto el terreno es un bloque
-        plano de 3000 px de largo y el ojo no tiene donde agarrarse."""
-        for sx in range(ox + 2, ox + 14, 5):
-            for sy in range(3, 14, 6):
-                d.rectangle([sx, sy, sx + 2, sy + 2], fill=color)
-
-    # 0: solida (el interior justo debajo de la superficie)
-    picado(0, TERRENO + (255,), TERRENO_VETA + (255,))
-    ranuras(0, (36, 26, 31, 255))
-
-    # 1: superficie, con ceja iluminada
-    picado(16, TERRENO + (255,), TERRENO_VETA + (255,))
-    ranuras(16, (36, 26, 31, 255))
-    d.rectangle([16, 0, 31, 0], fill=CEJA_FUERTE + (255,))
-    d.rectangle([16, 1, 31, 1], fill=CEJA_MEDIA + (255,))
-    d.rectangle([16, 2, 31, 2], fill=(72, 48, 42, 255))
-    # Mordiscos en la ceja: una linea de 16 px perfecta se lee como regla.
-    for mx in range(16, 32):
-        if rnd.random() < 0.22:
-            d.point([(mx, 0)], fill=CEJA_MEDIA + (255,))
-
-    # 2: relleno decorativo, sin colision
-    picado(32, TERRENO_VETA + (255,), tierra)
-
-    # 3: tierra profunda
-    picado(48, tierra, (20, 14, 19, 255))
-    return img
+# El tileset ya no sale de aqui: lo genera generar_mundo.py (tileset_mundo.png,
+# 8x2 celdas para exterior e interior).
 
 
 # ---------- Foso ----------
@@ -503,7 +458,6 @@ if __name__ == "__main__":
     guardar(capa_5_cercano(), os.path.join(PARALLAX, "capa_5_cercano.png"))
     guardar(capa_6_primer_plano(), os.path.join(PARALLAX, "capa_6_primer_plano.png"))
     print("Terreno:")
-    guardar(tileset(), os.path.join(RAIZ, "placeholder", "tileset_caja.png"))
     guardar(foso(), os.path.join(RAIZ, "placeholder", "foso.png"))
     print("Terminal CRT:")
     guardar(crt_cuerpo(), os.path.join(RAIZ, "placeholder", "crt", "crt_cuerpo.png"))
