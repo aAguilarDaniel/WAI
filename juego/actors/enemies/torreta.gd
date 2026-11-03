@@ -38,6 +38,9 @@ var _direccion: Vector2 = Vector2.LEFT
 var _jugador: Jugador = null
 
 func _ready() -> void:
+	if RegistroEnemigos.esta_eliminado(self):
+		queue_free()
+		return
 	add_to_group("enemigos")
 	if colgada:
 		sprite.flip_v = true
@@ -125,6 +128,7 @@ func _al_recibir_dano(_cantidad: int, direccion: Vector2) -> void:
 
 func _al_morir(_fuente: Node) -> void:
 	EstadoJuego.sumar("enemigos_eliminados")
+	RegistroEnemigos.marcar(self)
 	set_physics_process(false)
 	mira.visible = false
 	hurtbox.set_deferred("monitorable", false)

@@ -62,5 +62,6 @@ python herramientas/trailer.py                # rueda y monta el tráiler
 godot --headless --quit --path juego              # ¿importa sin errores?
 godot --path juego res://tools/prueba_nivel.tscn  # ¿el nivel sigue siendo jugable?
 godot --path juego res://tools/prueba_nivel_02.tscn     # paso al nivel 2 y sus mecánicas
-godot --path juego res://tools/prueba_tramo_final.tscn  # niveles 3-5, jefe y final
+godot --path juego res://tools/prueba_tramo_final.tscn  # niveles 3-7, el Custodio y el final
+godot --path juego res://tools/prueba_secreto.tscn      # el registro, el Reflejo y el final secreto
 ```

@@ -4,7 +4,7 @@
 #   godot --path juego res://tools/vistazo_jefe.tscn
 extends Node
 
-const NIVEL_5: String = "res://levels/nivel_05/nivel_05.tscn"
+const NIVEL_5: String = "res://levels/nivel_07/nivel_07.tscn"
 const FINAL: String = "res://ui/final/final.tscn"
 
 func _ready() -> void:

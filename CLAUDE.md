@@ -611,6 +611,41 @@ y la ramificación de finales del Hito 8) porque lo pidió el equipo.
 - `tools/prueba_tramo_final.tscn` (32 comprobaciones) y `tools/vistazo_jefe.tscn`.
 - Placeholders: `herramientas/generar_jefe.py` y `generar_audio_jefe.py`.
 
+### Niveles 5-6 y el jefe secreto (sesión del 2026-11-03, noche)
+
+Pedido: más niveles y un jefe final secreto si se mata a todos los enemigos.
+
+- **Recorrido**: 1 → 2 → 3 → 4 → **5 (el archivo, drones) → 6 (los hornos,
+  prensas)** → 7 (el relicario: el Custodio). **El relicario pasó de `nivel_05` a
+  `nivel_07`** (archivos, generador y `checkpoint_id`). Una partida guardada en el
+  viejo `nivel_05` se abre en el archivo nuevo sin encontrar su CRT: reaparece al
+  inicio. Solo afecta partidas de hoy.
+- **El secreto**: si no queda ni un enemigo vivo en los niveles 1-6 (55), el último
+  monitor lleva a `levels/secreto/` en vez del final. Jefe: **El Reflejo**, el
+  protagonista en negro con sus mismos movimientos. Al vencerlo, final secreto.
+- **`RegistroEnemigos`** cuenta POR enemigo con banderas en `EstadoJuego` (viajan en
+  el JSON). Los muertos siguen muertos al retomar una partida. El total se lee de las
+  escenas con `SceneState`: un enemigo cuenta si cuelga del nodo `Enemigos`.
+- **`ArenaJefe` es genérica** (contrato por convención: ver su cabecera).
+
+#### Lo que estaba roto y no daba error
+
+1. **Un enemigo empujado a un abismo caía para siempre**: la `ZonaMortal` solo
+   detectaba al jugador. Con el secreto, eso lo volvía imposible sin aviso.
+2. **El Reflejo no disparaba nunca**: `var x: Array[float] = [a] if c else [b]` da
+   un `Array` sin tipo y falla en tiempo de ejecución. Lo encontró
+   `prueba_secreto`. **Regla: no usar ternarios para inicializar arrays tipados.**
+3. **El piloto del nivel 1 se quedaba quieto a veces** (desde el inicio o tras
+   reaparecer). Al perder el foco la ventana, Godot suelta todas las acciones y el
+   piloto creía que seguía pulsando "derecha". Ahora vuelve a pulsar lo que
+   debería estar pulsado. 4 de 4 corridas completas.
+
+#### Decisiones tomadas (revisables)
+
+- Matar a todos incluye a los que mueren al caer al vacío.
+- La única pista para el jugador es *"A cuántos he dejado pasar"* en el diario.
+- Textos del Reflejo y del final secreto: **borradores**, en `docs/TEXTOS_PENDIENTES.md`.
+
 ### Pendiente de decisión del equipo
 
 - ~~**Calibrar `Alma.ESCALA`**~~ → hecho: 2.5, con el nivel 1 cerrado a 9 enemigos.

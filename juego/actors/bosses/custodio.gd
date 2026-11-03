@@ -1,4 +1,4 @@
-# El Custodio: el jefe del final de la demo (Hito 7). Lo instancia el nivel 5 y
+# El Custodio: el jefe del final de la demo (Hito 7). Lo instancia el nivel 7 (el relicario) y
 # lo dirige ArenaJefe, que decide cuando despierta y que pasa al derrotarlo.
 #
 # Habla el MISMO idioma que todo lo demas del juego: AVISO, GOLPE, VENTANA. Cada

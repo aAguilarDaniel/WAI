@@ -25,7 +25,7 @@ extends Node
 const C = preload("res://tools/constructor_nivel.gd")
 
 const RUTA_NIVEL: String = "res://levels/nivel_04/nivel_04.tscn"
-const RUTA_SIGUIENTE: String = "res://levels/nivel_05/nivel_05.tscn"
+const RUTA_SIGUIENTE: String = "res://levels/nivel_05/nivel_05.tscn"  # el archivo
 const PROPS: String = "res://art/placeholder/props/"
 
 const ANCHO_TILES: int = 172

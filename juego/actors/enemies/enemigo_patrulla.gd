@@ -67,6 +67,10 @@ var _dir_embestida: int = 1
 var _fase_brillo: float = 0.0
 
 func _ready() -> void:
+	# Ya lo mato antes de guardar: al retomar la partida sigue muerto.
+	if RegistroEnemigos.esta_eliminado(self):
+		queue_free()
+		return
 	add_to_group("enemigos")
 	_dir = 1 if direccion_inicial >= 0 else -1
 	_orientar()
@@ -256,6 +260,7 @@ func _al_terminar_invulnerabilidad() -> void:
 func _al_morir(_fuente: Node) -> void:
 	# El peso del eje ya lo aplico ComponenteArma: aqui solo se lleva la cuenta.
 	EstadoJuego.sumar("enemigos_eliminados")
+	RegistroEnemigos.marcar(self)
 	Efectos.restos(self, global_position + Vector2(0.0, -10.0))
 	Impacto.muerte(0.8)
 	DirectorAudio.efecto_variado("rotura", -5.0)

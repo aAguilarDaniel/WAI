@@ -452,3 +452,19 @@ static func arcos(padre: Node2D, tabla: Array) -> void:
 			"Arco%02d" % (i + 1), Vector2(int(datos[0]) * 16 + 8, int(datos[1]) * 16))
 		arco.set("altura", float(int(datos[2]) * 16))
 		arco.set("desfase", float(datos[3]))
+
+## [tile, fila en la que flota]. El dron se coloca en el centro de esa celda.
+static func drones(padre: Node2D, tabla: Array) -> void:
+	for i: int in tabla.size():
+		var datos: Array = tabla[i]
+		instanciar("res://actors/enemies/dron.tscn", padre, "Dron%02d" % (i + 1),
+			Vector2(int(datos[0]) * 16 + 8, int(datos[1]) * 16 + 8))
+
+## [tile, fila del techo (la primera de aire), filas hasta el suelo, desfase]
+static func prensas(padre: Node2D, tabla: Array) -> void:
+	for i: int in tabla.size():
+		var datos: Array = tabla[i]
+		var prensa: Node = instanciar("res://systems/peligros/prensa.tscn", padre,
+			"Prensa%02d" % (i + 1), Vector2(int(datos[0]) * 16 + 8, int(datos[1]) * 16))
+		prensa.set("recorrido", float(int(datos[2]) * 16))
+		prensa.set("desfase", float(datos[3]))

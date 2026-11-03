@@ -236,6 +236,11 @@ func _soltar_vencidas(delta: float) -> void:
 			_sostenidas.erase(accion)
 		else:
 			_sostenidas[accion] = resto
+			# Si la ventana pierde el foco, Godot suelta todas las acciones. El
+			# piloto seguia creyendo que apretaba "derecha" y se quedaba quieto
+			# para siempre (atascado en el tile 5, a veces desde el principio).
+			if not Input.is_action_pressed(accion):
+				_evento(accion, true)
 
 func _evento(accion: String, pulsada: bool) -> void:
 	var evento: InputEventAction = InputEventAction.new()

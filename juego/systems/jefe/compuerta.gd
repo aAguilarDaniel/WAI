@@ -1,5 +1,5 @@
 # Compuerta de la arena del jefe: baja para cerrar y sube para abrir. La usa
-# ArenaJefe; la instancia tools/generar_nivel_05.gd.
+# ArenaJefe; la instancia tools/generar_nivel_07.gd.
 class_name Compuerta
 extends StaticBody2D
 

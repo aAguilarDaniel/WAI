@@ -21,6 +21,8 @@ Si tocan uno a mano, la próxima vez que corran el script lo pisan.
 | `generar_audio.py` | El ambiente en bucle y los 8 efectos de `audio/` |
 | `generar_jefe.py` | Torreta, proyectil enemigo, plataforma frágil, compuerta, gran monitor del final y el jefe (El Custodio), con sus `SpriteFrames` |
 | `generar_audio_jefe.py` | La música del jefe en bucle y 6 efectos del tramo final |
+| `generar_secreto.py` | Dron, prensa y la gran pantalla de la sala secreta |
+| `generar_audio_secreto.py` | La música del Reflejo, el zumbido del dron y el golpe de la prensa |
 
 ```
 python herramientas/generar_siluetas.py --contacto
@@ -405,3 +407,18 @@ son las de las colisiones de las escenas: redibujar encima no toca código.
 |---|---|---|
 | `audio/musica_jefe.wav` | `Arena.musica` en `nivel_05.tscn` | Bucle de 8 compases a 138 BPM. Cambiarla es cambiar ese recurso |
 | `rugido`, `pisoton`, `rayo_carga`, `rayo`, `disparo_torreta`, `derrumbe` | Custodio, torreta, plataforma frágil | Efectos sintetizados |
+
+## Niveles 5-6 y jefe secreto
+
+| Ruta final | Tamaño (px) | Frames | Descripción | Estado |
+|---|---|---|---|---|
+| `art/placeholder/dron.png` | 16x12 por celda | `flotar` 2, `apuntar` 2, `picado` 2, `aturdido` 2 | Ojo de cámara con aspas. Hurtbox 12x9 centrada | pendiente |
+| `art/placeholder/props/prensa_cabeza.png` | 32x16 | 1 | Cara de la prensa, franjas de peligro abajo | pendiente |
+| `art/placeholder/props/prensa_vastago.png` | 8x16 (se repite en vertical) | 1 | El pistón | pendiente |
+| `art/placeholder/props/pantalla_secreta.png` | 128x96 | 1 | El CRT del que sale el Reflejo | pendiente |
+| El Reflejo | — | — | **No tiene hoja**: usa `jugador_frames.tres` teñido de negro. Si redibujan al protagonista, su reflejo cambia solo. Es a propósito | — |
+
+| Audio | Dónde | Nota |
+|---|---|---|
+| `audio/musica_secreta.wav` | `Arena.musica` en `levels/secreto/nivel_secreto.tscn` | Bucle de 16 s: latido, acorde sin resolver, melodía al revés |
+| `zumbido_dron`, `prensa` | Dron y prensa | Efectos sintetizados |

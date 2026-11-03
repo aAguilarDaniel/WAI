@@ -82,3 +82,20 @@ Criterio con el que se escribieron, por si sirve: ninguna contesta la pregunta d
 `CLAUDE.md` §1. La humana se queda con lo que siente aunque sea un error; la
 máquina habla de sí misma como unidad (la "revelación temprana" de §1); la ambigua
 termina esperando una respuesta que no llega.
+
+## Borradores del jefe secreto (sesión del 2026-11-03, noche)
+
+| Texto | Dónde se cambia |
+|---|---|
+| Entrada del diario al vencer al Reflejo, una por ruta | Nodo `Arena` de `levels/secreto/nivel_secreto.tscn` (y en `tools/generar_nivel_secreto.gd`) |
+| Las cinco líneas del final secreto | `lineas_secreto` en `ui/final/final.tscn` |
+
+Las que van ahora:
+
+- **Diario, humana:** "Tenía mi cara. Cuando cayó se sentó como me siento yo frente a las pantallas. No supe por quién estaba llorando."
+- **Diario, ambigua:** "Hacía lo que yo hacía, un instante después. O un instante antes. Ya no lo puedo comprobar."
+- **Diario, máquina:** "Copia no autorizada eliminada. Original: sin verificar."
+- **Final secreto:** "Lo maté a él también." / "Era el último. Era yo, o lo que la pantalla decía que era yo." / "Ya no queda nadie a quien preguntarle." / "La pantalla está apagada. En el vidrio negro hay una figura sentada." / "No se mueve cuando yo me muevo."
+
+El final secreto es el mismo texto en las tres rutas; lo que cambia es la letra y
+el color con que se escribe.

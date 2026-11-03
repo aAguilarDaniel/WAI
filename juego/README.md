@@ -22,8 +22,12 @@ en Proyecto → Ajustes → Rendering → Renderer.
    ```
    Nivel 1 (exterior) -> portal del edificio -> Nivel 2 (la nave)
      -> ascensor -> Nivel 3 (los conductos) -> escotilla -> Nivel 4 (la cornisa)
-     -> puerta del relicario -> Nivel 5 (antesala, el jefe, el último monitor)
+     -> Nivel 5 (el archivo) -> Nivel 6 (los hornos)
+     -> puerta del relicario -> Nivel 7 (antesala, el jefe, el último monitor)
      -> Final (según la ruta) -> Fin de la demo (estadísticas y créditos)
+
+   Si no queda NI UN enemigo vivo en los niveles 1-6, el último monitor lleva a
+   la sala secreta (El Reflejo) y de ahí al final secreto.
    ```
 
 Sin abrir el editor:
@@ -244,8 +248,8 @@ La tabla que había aquí decía que matar a los 9 del nivel 1 con el tubo daba 
 **No era cierto**: el recorte lo deja en +0.27, que no cruza ningún umbral. Con solo
 el nivel 1, cualquier partida terminaba en ruta ambigua. Con los dos niveles:
 
-Con los cinco niveles hay **33 enemigos** (15 de los niveles 1-2, 5 de patrulla y
-4 torretas en el 3 y en el 4) más el jefe:
+Con los seis niveles hay **55 enemigos** (15 en los niveles 1-2, 9 en el 3, 9 en
+el 4, 13 en el 5 y 9 en el 6) más los jefes:
 
 | Cómo se juega la demo entera | Eje al final | Ruta |
 |---|---|---|
@@ -255,7 +259,7 @@ Con los cinco niveles hay **33 enemigos** (15 de los niveles 1-2, 5 de patrulla 
 | Mezclar armas de los dos bandos | cerca de 0 | Ambiguo |
 | Pasar sin matar a nadie (+0.03 por nivel, ver abajo) | +0.15 | Ambiguo |
 
-Hacen falta **14 muertes del mismo bando de 33**: ahora es una decisión de estilo
+Hacen falta **14 muertes del mismo bando de 55**: ahora es una decisión de estilo
 de juego, no una hazaña. Subir `ESCALA` no cambia nada (manda el recorte); lo que
 mueve la cuenta es `CAMBIO_MAXIMO` o los umbrales.
 
@@ -740,9 +744,26 @@ relicario, con la única luz roja del nivel (el color del jefe).
 - **`PlataformaFragil`** (`systems/peligros/`): aguanta 0.5 s con el jugador
   encima (tiembla y cruje), cae y vuelve a los 2.6 s.
 
-## Nivel 5 y el jefe
+## Niveles 5 y 6
 
-`levels/nivel_05/nivel_05.tscn`: antesala con CRT y dos vendas, la arena y la sala
+**Nivel 5, el archivo** (`tools/generar_nivel_05.gd`, interior, 132 tiles).
+Introduce el **dron**: una sala alta con uno solo para leerlo, después mezclado
+con enemigos y torretas, y una gran nave que se cruza por abajo o por pasarelas.
+
+**Nivel 6, los hornos** (`_06.gd`, 148 tiles). Introduce las **prensas**: un
+pasillo con tres desfasadas, una sala con todo lo anterior y un pasillo de cuatro
+en cadena. Sin música: el silencio antes del relicario.
+
+- **`Dron`** (`actors/enemies/dron.tscn`): flota en su sitio; al verte (120 px y
+  línea de visión) se pone encima y apunta 0.65 s con el ojo rojo; el último cuarto
+  del aviso ya no te sigue. Cae en picado recto, se queda aturdido 0.9 s (ahí se le
+  pega) y vuelve. 2 de vida.
+- **`Prensa`** (`systems/peligros/prensa.tscn`): descanso 1.5 s, aviso 0.55 s
+  (tiembla y chispea), baja en 0.12 s. Solo hace daño **al bajar** (2).
+
+## Nivel 7 (el relicario) y el jefe
+
+`levels/nivel_07/nivel_07.tscn` (era el `nivel_05`): antesala con CRT y dos vendas, la arena y la sala
 del último monitor.
 
 ### El Custodio (`actors/bosses/custodio.tscn`)
@@ -788,7 +809,7 @@ Los textos de los finales y de la entrada del jefe son **borradores**: ver
 ## Comprobar el tramo final
 
 ```
-godot --path juego res://tools/prueba_tramo_final.tscn   32 comprobaciones
+godot --path juego res://tools/prueba_tramo_final.tscn   37 comprobaciones
 godot --path juego res://tools/vistazo_jefe.tscn         fotos del jefe y de los tres finales
 ```
 
@@ -798,3 +819,56 @@ con el tubo y mira que el eje se mueva, entra a la arena (compuerta, silencio,
 música, cámara), fuerza las dos fases, comprueba que el rayo **no** alcanza al que
 se agacha y **sí** al que está de pie, muere dentro, derrota al jefe, entra al final
 y retoma una partida en ruta máquina.
+
+## El camino secreto: El Reflejo
+
+**Condición: que no quede ni un enemigo vivo en los niveles 1-6** (55). Entonces
+el último monitor del relicario no lleva al final sino a
+`levels/secreto/nivel_secreto.tscn`.
+
+### Cómo se cuenta (`systems/registro_enemigos.gd`)
+
+- **Por enemigo, no por número.** Cada uno, al morir, deja una bandera
+  `eliminado:<nivel>:<nodo>` en `EstadoJuego`, que viaja en el JSON de guardado.
+  La estadística `enemigos_eliminados` no sirve: al retomar una partida el nivel
+  se recarga, y matar dos veces al mismo la inflaba.
+- **Los muertos siguen muertos** al retomar una partida, como los recogibles.
+- **El total se lee de las escenas sin instanciarlas** (`SceneState`): son los hijos
+  del nodo `Enemigos` de cada nivel de `RegistroEnemigos.NIVELES`. Añadir un enemigo
+  en el editor ya cuenta. Un enemigo que no cuelgue de `Enemigos` no cuenta.
+- **La `ZonaMortal` ahora mata también a los enemigos.** Un golpe puede empujar a
+  uno a un abismo y antes caía para siempre: el secreto se volvía imposible sin que
+  el jugador pudiera saberlo. Cuenta como eliminado.
+- La pista que tiene el jugador es la del diario: *"A cuántos he dejado pasar"*.
+
+### El Reflejo (`actors/bosses/reflejo.tscn`)
+
+El protagonista, en negro, con sus mismas animaciones (`jugador_frames.tres`).
+Espera sentado delante de la pantalla, como el jugador en cada CRT. 24 de vida;
+fase 2 a la mitad (más rápido, deja estela, ojos rojos y añade el salto).
+
+| Ataque | Aviso | Se esquiva |
+|---|---|---|
+| Tajo | Destello en la mano, 0.42 s | Rodar o apartarse |
+| Rueda hacia ti | Se agacha, 0.38 s | Saltarlo o rodar a través |
+| Disparo (1, o 3 en abanico en fase 2) | Mira roja, 0.55 s, **a 18 px** | **Agacharse** |
+| Salto con dos ondas (fase 2) | Se agacha | Saltar la onda |
+
+Y a veces **esquiva tu golpe rodando** (30 %, 50 % en fase 2, con 2.2 s de espera
+entre esquivas). Al morir no explota: se sienta y se apaga.
+
+La arena es la misma `ArenaJefe` del Custodio, ahora genérica: encuentra al jefe
+por el grupo `jefe` y le habla por convención (`despertar`, `reiniciar`,
+`esta_dormido`, señales `desperto` y `derrotado`). Al vencerlo, la pantalla se
+vuelve la salida y el final usa `lineas_secreto`.
+
+### Comprobarlo
+
+```
+godot --path juego res://tools/prueba_secreto.tscn
+```
+
+Cuenta los 55, mata a uno y recarga el nivel (sigue muerto), tira a otro al vacío
+(cuenta), cruza el monitor sin y con el registro completo, y pelea con el Reflejo:
+compuerta, música, el disparo que no alcanza al agachado y sí al de pie, fase 2,
+muerte y reinicio, derrota, entrada del diario y final secreto.

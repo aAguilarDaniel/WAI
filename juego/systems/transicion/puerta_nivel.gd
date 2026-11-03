@@ -15,6 +15,9 @@ signal cruzada
 
 ## Escena a la que lleva.
 @export_file("*.tscn") var destino: String = ""
+## Si no queda ningun enemigo vivo en todo el juego (RegistroEnemigos), lleva
+## aqui en vez de a `destino`. Solo lo usa el ultimo monitor del relicario.
+@export_file("*.tscn") var destino_secreto: String = ""
 ## Cuanto avanza el jugador hacia dentro mientras funde a negro.
 @export var paso_hacia_dentro: float = 14.0
 
@@ -44,4 +47,7 @@ func _al_entrar(cuerpo: Node2D) -> void:
 	adentro.tween_property(jugador.sprite, "modulate", Color(0.15, 0.15, 0.18), 0.5)
 	DirectorAudio.efecto("puerta", -6.0)
 	cruzada.emit()
-	CargadorEscenas.ir_a_nivel(destino, jugador.instantanea())
+	var a_donde: String = destino
+	if not destino_secreto.is_empty() and RegistroEnemigos.todos_eliminados():
+		a_donde = destino_secreto
+	CargadorEscenas.ir_a_nivel(a_donde, jugador.instantanea())

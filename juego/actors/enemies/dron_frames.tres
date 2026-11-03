@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3]
+
+[ext_resource type="Texture2D" path="res://art/placeholder/dron.png" id="1_hoja"]
+
+[sub_resource type="AtlasTexture" id="flotar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 0, 16, 12)
+
+[sub_resource type="AtlasTexture" id="flotar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(16, 0, 16, 12)
+
+[sub_resource type="AtlasTexture" id="apuntar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 12, 16, 12)
+
+[sub_resource type="AtlasTexture" id="apuntar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(16, 12, 16, 12)
+
+[sub_resource type="AtlasTexture" id="picado_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 24, 16, 12)
+
+[sub_resource type="AtlasTexture" id="picado_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(16, 24, 16, 12)
+
+[sub_resource type="AtlasTexture" id="aturdido_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 36, 16, 12)
+
+[sub_resource type="AtlasTexture" id="aturdido_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(16, 36, 16, 12)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("flotar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("flotar_1")
+}],
+"loop": true,
+"name": &"flotar",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("apuntar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("apuntar_1")
+}],
+"loop": true,
+"name": &"apuntar",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("picado_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("picado_1")
+}],
+"loop": true,
+"name": &"picado",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("aturdido_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("aturdido_1")
+}],
+"loop": true,
+"name": &"aturdido",
+"speed": 4.0
+}]

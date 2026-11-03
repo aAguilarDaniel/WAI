@@ -1,6 +1,8 @@
 # El final (Hito 8): el protagonista sentado frente al ultimo monitor, como en
 # cada guardado, y unas lineas escritas con SU letra. Es el destino de la puerta
-# del monitor del nivel 5; al terminar lleva a ui/fin/fin_demo.tscn (creditos).
+# del monitor del nivel 7; al terminar lleva a ui/fin/fin_demo.tscn (creditos).
+# Si se derroto al Reflejo (el jefe secreto) las lineas son las del final secreto,
+# escritas con la letra de la ruta en la que se llego.
 #
 # Ramifica por Alma.ruta_actual() en el punto final (HITOS.md). El eje no se
 # muestra: lo que cambia es lo de siempre, la letra, su color y la luz de la
@@ -51,6 +53,17 @@ const LUZ: Dictionary = {
 	"Nunca hubo nadie aquí dentro.",
 	"Reanudando tarea.",
 ]
+## Final secreto: tras matar a todos y a la propia imagen. Igual en las tres
+## rutas; lo que cambia es la letra con la que esta escrito.
+@export var lineas_secreto: PackedStringArray = [
+	"Lo maté a él también.",
+	"Era el último. Era yo, o lo que la pantalla decía que era yo.",
+	"Ya no queda nadie a quien preguntarle.",
+	"La pantalla está apagada. En el vidrio negro hay una figura sentada.",
+	"No se mueve cuando yo me muevo.",
+]
+const BANDERA_SECRETO: String = "jefe_reflejo_derrotado"
+
 ## Segundos por letra al teclear, y de pausa entre lineas.
 @export var velocidad: float = 0.045
 @export var pausa_linea: float = 1.6
@@ -78,6 +91,8 @@ func _ready() -> void:
 			_lineas = lineas_maquina
 		_:
 			_lineas = lineas_ambiguo
+	if EstadoJuego.bandera(BANDERA_SECRETO):
+		_lineas = lineas_secreto
 	var fuente: Font = load(FUENTES[_ruta]) as Font
 	if fuente != null:
 		texto.add_theme_font_override("font", fuente)

@@ -1,0 +1,51 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://actors/enemies/dron.gd" id="1_dron"]
+[ext_resource type="SpriteFrames" path="res://actors/enemies/dron_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://systems/components/componente_salud.gd" id="3_salud"]
+[ext_resource type="Script" path="res://systems/components/componente_hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="5_hitbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo.png" id="6_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="7_aditivo"]
+
+[sub_resource type="RectangleShape2D" id="Forma_dron"]
+size = Vector2(12, 9)
+
+[sub_resource type="RectangleShape2D" id="Forma_contacto"]
+size = Vector2(10, 8)
+
+[node name="Dron" type="Node2D"]
+script = ExtResource("1_dron")
+
+[node name="Brillo" type="Sprite2D" parent="."]
+material = ExtResource("7_aditivo")
+z_index = -1
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("6_brillo")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"flotar"
+
+[node name="Salud" type="Node" parent="."]
+script = ExtResource("3_salud")
+salud_maxima = 2
+duracion_invulnerabilidad = 0.2
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("4_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("Forma_dron")
+
+[node name="HitboxContacto" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("5_hitbox")
+dano = 1
+dano_continuo = true
+
+[node name="Forma" type="CollisionShape2D" parent="HitboxContacto"]
+shape = SubResource("Forma_contacto")

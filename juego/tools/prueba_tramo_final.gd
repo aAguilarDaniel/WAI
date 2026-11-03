@@ -11,6 +11,8 @@ extends Node
 const NIVEL_3: String = "res://levels/nivel_03/nivel_03.tscn"
 const NIVEL_4: String = "res://levels/nivel_04/nivel_04.tscn"
 const NIVEL_5: String = "res://levels/nivel_05/nivel_05.tscn"
+const NIVEL_6: String = "res://levels/nivel_06/nivel_06.tscn"
+const NIVEL_7: String = "res://levels/nivel_07/nivel_07.tscn"
 const FINAL: String = "res://ui/final/final.tscn"
 const TUBO: String = "res://systems/weapons/data/tubo_metal.tres"
 
@@ -36,7 +38,11 @@ func _correr() -> void:
 	await _prueba_salida(Vector2i(171, 15), NIVEL_4, "la escotilla del nivel 3 lleva al nivel 4")
 	await _prueba_fragil()
 	await _prueba_torreta_muere_y_pesa()
-	await _prueba_salida(Vector2i(163, 7), NIVEL_5, "la puerta del relicario lleva al nivel 5")
+	await _prueba_salida(Vector2i(163, 7), NIVEL_5, "la puerta de la cornisa lleva al nivel 5 (el archivo)")
+	await _prueba_dron()
+	await _prueba_salida(Vector2i(124, 15), NIVEL_6, "la salida del archivo lleva al nivel 6 (los hornos)")
+	await _prueba_prensa()
+	await _prueba_salida(Vector2i(140, 15), NIVEL_7, "la salida de los hornos lleva al nivel 7 (el relicario)")
 	await _prueba_arena()
 	await _prueba_rayo()
 	await _prueba_muerte_en_arena()
@@ -140,7 +146,50 @@ func _prueba_torreta_muere_y_pesa() -> void:
 	_comprobar("y matarla con el tubo empuja el eje hacia lo humano (%+.3f)" % (Alma.valor() - alma_antes),
 		Alma.valor() > alma_antes)
 
-# --------------------------------------------------------------- Nivel 5 ----
+# ----------------------------------------------------------- Niveles 5-6 ----
+
+func _prueba_dron() -> void:
+	_quitar_apertura()
+	_quitar_patrullas()
+	var jugador: Jugador = _jugador()
+	jugador.salud.revivir()
+	jugador.salud.fijar_invulnerable(false)
+	var dron: Dron = _nodo("Enemigos/Dron01") as Dron
+	var antes: int = jugador.salud.salud_actual
+	jugador.global_position = Vector2(dron.global_position.x, 15 * 16 - 1)
+	jugador.velocity = Vector2.ZERO
+	await _esperar(2.0)
+	_comprobar("el dron cae en picado y hace dano (%d -> %d)" % [antes, jugador.salud.salud_actual],
+		jugador.salud.salud_actual < antes)
+	# Aturdido en el suelo es cuando se le pega.
+	jugador.salud.fijar_invulnerable(true)
+	var muertos: int = EstadoJuego.estadistica("enemigos_eliminados")
+	for i: int in 30:
+		if not is_instance_valid(dron) or not dron.salud.esta_vivo():
+			break
+		jugador.global_position = dron.global_position + Vector2(-14.0, 12.0)
+		jugador.mira = 1
+		await _pulsar("atacar", 0.08)
+		await _esperar(0.3)
+	_comprobar("el dron se puede derribar a golpes",
+		EstadoJuego.estadistica("enemigos_eliminados") > muertos)
+
+func _prueba_prensa() -> void:
+	_quitar_apertura()
+	var jugador: Jugador = _jugador()
+	jugador.salud.revivir()
+	jugador.salud.fijar_invulnerable(false)
+	var prensa: Prensa = _nodo("Peligros/Prensa01") as Prensa
+	jugador.global_position = Vector2(prensa.global_position.x, 15 * 16 - 1)
+	jugador.velocity = Vector2.ZERO
+	var antes: int = jugador.salud.salud_actual
+	# Un ciclo entero mide 3.4 s: asi seguro que baja al menos una vez.
+	await _esperar(3.6)
+	_comprobar("la prensa aplasta al que se queda debajo (%d -> %d)" % [antes, jugador.salud.salud_actual],
+		jugador.salud.salud_actual < antes)
+	jugador.salud.revivir()
+
+# --------------------------------------------------------------- Nivel 7 ----
 
 func _prueba_arena() -> void:
 	_quitar_apertura()

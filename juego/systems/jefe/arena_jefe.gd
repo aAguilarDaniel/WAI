@@ -1,6 +1,12 @@
-# Arena del Custodio: cierra la puerta al entrar, despierta al jefe, pone su
+# Arena de un jefe: cierra la puerta al entrar, despierta al jefe, pone su
 # musica y, al derrotarlo, escribe la entrada del diario y abre la salida.
-# La instancia tools/generar_nivel_05.gd; el jefe no sabe nada de puertas.
+# La instancian tools/generar_nivel_07.gd (el Custodio) y
+# tools/generar_nivel_secreto.gd (el Reflejo). El jefe no sabe nada de puertas.
+#
+# El jefe es el hijo del grupo "jefe". GDScript no tiene interfaces, asi que el
+# contrato va por convencion y lo cumplen Custodio y Reflejo: senales
+# `desperto` y `derrotado`, metodos `despertar()`, `reiniciar()` y
+# `esta_dormido()`. Por eso `jefe` es Node y las llamadas van por nombre.
 #
 # Si el jugador muere dentro, el jefe vuelve a dormirse con la vida llena y la
 # puerta se reabre: reaparece en el CRT de antes de la arena y vuelve a entrar.
@@ -8,6 +14,10 @@ class_name ArenaJefe
 extends Node2D
 
 const BANDERA: String = "jefe_custodio_derrotado"
+
+## Bandera que queda puesta al derrotarlo. Si ya esta puesta al entrar al nivel,
+## la arena es solo un paso.
+@export var bandera: String = BANDERA
 
 ## Musica del combate. Suena solo despues de la pausa de intimidacion.
 @export var musica: AudioStream
@@ -24,24 +34,33 @@ const BANDERA: String = "jefe_custodio_derrotado"
 @export_multiline var entrada_ambigua: String = ""
 @export_multiline var entrada_maquina: String = ""
 
-@onready var jefe: Custodio = $Custodio
 @onready var entrada: Compuerta = $CompuertaEntrada
-@onready var salida: Compuerta = $CompuertaSalida
 @onready var disparador: Area2D = $Disparador
+## Opcionales: una compuerta que se abre al vencer, una puerta que se activa.
+@onready var salida: Compuerta = get_node_or_null("CompuertaSalida") as Compuerta
+@onready var puerta: PuertaNivel = get_node_or_null("PuertaSalida") as PuertaNivel
+
+var jefe: Node = null
 
 var _combate: bool = false
 var _camara: Camera2D = null
 var _limites_previos: Vector2i = Vector2i.ZERO
 
 func _ready() -> void:
+	for hijo: Node in get_children():
+		if hijo.is_in_group("jefe"):
+			jefe = hijo
 	disparador.body_entered.connect(_al_entrar)
-	jefe.desperto.connect(_al_despertar)
-	jefe.derrotado.connect(_al_derrotar)
-	salida.cerrar(true)
-	if EstadoJuego.bandera(BANDERA):
+	jefe.connect("desperto", _al_despertar)
+	jefe.connect("derrotado", _al_derrotar)
+	if salida != null:
+		salida.cerrar(true)
+	if puerta != null:
+		puerta.set_deferred("monitoring", false)
+	if EstadoJuego.bandera(bandera):
 		# Ya estaba derrotado (partida retomada): la arena es solo un paso.
 		jefe.queue_free()
-		salida.abrir(true)
+		_abrir_salida(true)
 		disparador.set_deferred("monitoring", false)
 		return
 	var jugador: Jugador = get_tree().get_first_node_in_group("jugador") as Jugador
@@ -51,7 +70,7 @@ func _ready() -> void:
 func _al_entrar(cuerpo: Node2D) -> void:
 	if _combate or not (cuerpo is Jugador) or not is_instance_valid(jefe):
 		return
-	if not jefe.esta_dormido():
+	if not bool(jefe.call("esta_dormido")):
 		return
 	_combate = true
 	entrada.cerrar()
@@ -59,7 +78,7 @@ func _al_entrar(cuerpo: Node2D) -> void:
 	# La pausa de intimidacion va en silencio: sin la cancion del nivel anterior,
 	# solo el ambiente. La musica entra cuando el jefe da el primer paso.
 	DirectorAudio.parar_musica()
-	jefe.despertar()
+	jefe.call("despertar")
 
 func _al_despertar() -> void:
 	DirectorAudio.musica(musica, volumen_musica)
@@ -67,7 +86,7 @@ func _al_despertar() -> void:
 func _al_derrotar() -> void:
 	_combate = false
 	DirectorAudio.parar_musica()
-	EstadoJuego.fijar_bandera(BANDERA, true)
+	EstadoJuego.fijar_bandera(bandera, true)
 	var texto: String = entrada_ambigua
 	match Alma.ruta_actual():
 		Alma.Ruta.HUMANO:
@@ -76,8 +95,14 @@ func _al_derrotar() -> void:
 			texto = entrada_maquina
 	if not texto.is_empty():
 		EstadoJuego.agregar_entrada(titulo_entrada, texto, "jefe")
-	salida.abrir()
+	_abrir_salida(false)
 	_soltar_camara()
+
+func _abrir_salida(inmediato: bool) -> void:
+	if salida != null:
+		salida.abrir(inmediato)
+	if puerta != null:
+		puerta.set_deferred("monitoring", true)
 
 ## Muerte dentro de la arena: el intento siguiente empieza limpio. Diferido
 ## porque murio se emite en plena fisica y el jugador todavia se esta moviendo.
@@ -90,7 +115,7 @@ func _al_morir_jugador(_fuente: Node) -> void:
 func _reiniciar() -> void:
 	DirectorAudio.parar_musica()
 	if is_instance_valid(jefe):
-		jefe.reiniciar()
+		jefe.call("reiniciar")
 	entrada.abrir(true)
 	_soltar_camara()
 

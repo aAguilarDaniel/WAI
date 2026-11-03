@@ -1,15 +1,17 @@
-# Herramienta: genera el nivel 5, el relicario. La antesala, la arena del
-# Custodio y la sala del monitor donde termina el juego.
+# Herramienta: genera el nivel 5, el archivo: salas de cintas y servidores
+# apilados hasta el techo. Se llega por la puerta de la cornisa (nivel 4).
 #
 #   godot --headless --path juego res://tools/generar_nivel_05.tscn
 #
-#   A. Antesala: CRT y dos vendas            -> prepararse (y saber que viene algo)
-#   B. Pasillo                               -> el silencio antes
-#   C. La arena: 24 tiles, un cuadro exacto  -> el jefe (Hito 7)
-#   D. Sala del monitor                      -> el final (Hito 8)
+# Lo nuevo es el DRON: la primera amenaza que viene de arriba.
 #
-# La arena mide 384 px de ancho a proposito: durante el combate la camara se
-# encierra en ella (ArenaJefe) y se ve entera, jefe y jugador a la vez.
+#   A. Llegada, un CRT                                  -> respirar
+#   B. Sala alta con UN dron solo y estanterias          -> leer el picado: se
+#                                                           coloca encima, apunta
+#                                                           y cae recto
+#   C. Pasillo: dron, enemigo y torreta juntos            -> mirar arriba y adelante
+#   D. Gran nave con pasarelas, dos drones arriba         -> por abajo o por arriba
+#   E. Salida vigilada                                    -> nivel 6
 #
 # Volver a correr esto PISA el nivel: si ya lo editaron a mano, no lo ejecuten.
 extends Node
@@ -17,124 +19,126 @@ extends Node
 const C = preload("res://tools/constructor_nivel.gd")
 
 const RUTA_NIVEL: String = "res://levels/nivel_05/nivel_05.tscn"
-const RUTA_FINAL: String = "res://ui/final/final.tscn"
+const RUTA_SIGUIENTE: String = "res://levels/nivel_06/nivel_06.tscn"
 const INTERIOR: String = "res://art/placeholder/interior/"
-const MUSICA_JEFE: String = "res://audio/musica_jefe.wav"
+const MUSICA: String = "res://audio/musica/bruh_150.mp3"
 
-const ANCHO_TILES: int = 100
+const ANCHO_TILES: int = 132
 const ALTO_TILES: int = 20
 
-## La arena: [x0, x1) en tiles y filas de techo y suelo.
-const ARENA_X0: int = 40
-const ARENA_X1: int = 64
-const ARENA_TECHO: int = 4
-const SUELO: int = 15
-
 const HUECOS: Array = [
-	[2, 8, 30, 15],                                  # A. antesala
-	[30, 11, ARENA_X0, 15],                          # B. pasillo, 4 filas
-	[ARENA_X0, ARENA_TECHO, ARENA_X1, 15],           # C. arena, 11 filas
-	[ARENA_X1, 11, 72, 15],                          # D. pasillo de salida
-	[72, 3, 98, 15],                                 # D. sala del monitor
+	[2, 6, 18, 15],      # A
+	[18, 3, 52, 15],     # B. sala alta, 12 filas
+	[52, 10, 70, 15],    # C. pasillo, 5 filas
+	[70, 2, 110, 15],    # D. gran nave
+	[110, 10, 130, 15],  # E. salida
 ]
 
-const TERMINALES: Array = [[22, 15, "nivel_05_crt_01"]]
-const RECOGIBLES: Array = [[12, 15, "venda", 1], [15, 15, "venda", 1]]
-## El rayo del jefe se esquiva agachado: si no lo aprendieron en el nivel 3, la
-## arena se lo vuelve a ofrecer (y la pista no sale si ya lo saben).
-const PISTAS: Array = [[46, 15, "agachar"]]
-
-const DECORACION: Array = [
-	[5, 15, "rack", false, -3], [9, 13, "ventanal", false, -5], [18, 15, "consola", false, -3],
-	[27, 15, "rack", true, -3], [33, 15, "tuberia", false, -3],
-	[44, 13, "ventanal", false, -5], [59, 13, "ventanal", false, -5],
-	[42, 15, "servidor_caido", false, -3], [61, 15, "servidor_caido", true, -3],
-	[76, 15, "rack", false, -3], [95, 15, "rack", true, -3],
-	[80, 13, "muro_monitores", false, -5],
+const BLOQUES: Array = [
+	[26, 13, 28, 15], [40, 13, 42, 15],   # B. estanterias: cobertura
+	[73, 13, 74, 15],                     # D. peldano a la primera pasarela
 ]
-const LAMPARAS: Array = [[8, 8], [20, 8], [35, 11], [78, 3], [94, 3]]
+
+## Pasarelas de un solo sentido. La ruta alta de la nave sube de 2 en 2.
+const PASARELAS: Array = [
+	[34, 38, 13],                         # B. a 2 tiles del suelo (regla de CLAUDE.md §7)
+	[74, 80, 13], [82, 88, 11], [90, 96, 9], [98, 104, 11],
+]
+
+const FRANJAS: Array = []
+const ARCOS: Array = []
+
+const TERMINALES: Array = [
+	[8, 15, "nivel_05_crt_01"], [72, 15, "nivel_05_crt_02"],
+]
+
+const ENEMIGOS: Array = [
+	[46, 15, -1], [66, 15, -1], [79, 15, 1], [105, 15, -1], [124, 15, -1],
+]
+
+const TORRETAS: Array = [
+	[62, 10, true], [93, 15, false], [116, 10, true],
+]
+
+## [tile, fila en la que flota]
+const DRONES: Array = [
+	[31, 8], [57, 11], [86, 5], [101, 5], [120, 11],
+]
+
+const RECOGIBLES: Array = [
+	[14, 15, "venda", 1], [93, 9, "venda", 1], [113, 15, "venda", 1],
+]
+
+const PISTAS: Array = []
+const PRENSAS: Array = []
 
 const INICIO: Vector2i = Vector2i(4, 15)
-const MONITOR: int = 88
+const SALIDA: Vector2i = Vector2i(127, 15)
+
+const DECORACION: Array = [
+	[3, 15, "rack", false, -3], [12, 13, "ventanal", false, -5],
+	[20, 15, "rack", false, -3], [22, 15, "rack", false, -3], [33, 15, "consola", false, -3],
+	[36, 15, "rack", true, -3], [44, 15, "rack", false, -3], [48, 15, "rack", false, -3],
+	[54, 15, "tuberia", false, -3], [68, 15, "servidor_caido", false, -3],
+	[76, 12, "ventanal", false, -5], [96, 12, "ventanal", false, -5],
+	[84, 15, "rack", false, -3], [88, 15, "rack", true, -3], [107, 15, "consola", true, -3],
+	[114, 15, "barril", false, -3], [122, 15, "rack", false, -3],
+]
+
+const LAMPARAS: Array = [
+	[10, 6], [24, 3], [38, 3], [48, 3], [60, 10], [78, 2], [92, 2], [104, 2], [118, 10],
+]
 
 func _ready() -> void:
 	var conjunto: TileSet = load(C.RUTA_TILESET) as TileSet
 	var raiz: Node2D = C.raiz("Nivel05")
 	raiz.set("margen_superior", 0)
 	raiz.set("margen_inferior", 24)
-	raiz.set("encuadre_camara", Vector2(0.0, -20.0))
+	raiz.set("encuadre_camara", Vector2(0.0, -14.0))
 	raiz.set("ambiente", "ambiente_interior")
-	raiz.set("volumen_ambiente", -14.0)
+	raiz.set("volumen_ambiente", -11.0)
+	raiz.set("musica", load(MUSICA))
+	raiz.set("volumen_musica", -12.0)
 
 	C.fondo(raiz, "FondoInterior", "res://shaders/interior.gdshader")
 	C.parallax(raiz, [
 		["CapaNave", INTERIOR + "capa_i1_nave.png", 0.12, -50],
-		["CapaColumnas", INTERIOR + "capa_i3_columnas.png", 0.5, -30],
+		["CapaRacks", INTERIOR + "capa_i2_racks.png", 0.32, -40],
+		["CapaColumnas", INTERIOR + "capa_i3_columnas.png", 0.58, -30],
 		["CapaCables", INTERIOR + "capa_i4_cables.png", 1.25, 20],
 	])
-	var deco: Node2D = C.decoracion_interior(raiz, DECORACION, LAMPARAS)
+	C.decoracion_interior(raiz, DECORACION, LAMPARAS)
 	var terreno: TileMapLayer = C.terreno(raiz, conjunto)
-	C.excavar(terreno, ANCHO_TILES, ALTO_TILES, HUECOS, [], [[ARENA_X0, ARENA_X1, SUELO]])
+	C.excavar(terreno, ANCHO_TILES, ALTO_TILES, HUECOS, BLOQUES, FRANJAS, PASARELAS)
 	C.zona_mortal(raiz, ANCHO_TILES * 16.0, ALTO_TILES * 16.0 + 40.0)
 
 	C.instanciar("res://actors/player/jugador.tscn", raiz, "Jugador",
 		Vector2(INICIO.x * 16, INICIO.y * 16))
+	var peligros: Node2D = C.contenedor(raiz, "Peligros")
+	C.arcos(peligros, ARCOS)
+	C.prensas(peligros, PRENSAS)
 	C.terminales(raiz, TERMINALES)
+	var enemigos: Node2D = C.contenedor(raiz, "Enemigos")
+	C.enemigos(enemigos, ENEMIGOS)
+	C.torretas(enemigos, TORRETAS)
+	C.drones(enemigos, DRONES)
 	C.recogibles(raiz, RECOGIBLES)
 	C.pistas(raiz, PISTAS)
-	_arena(raiz)
-
-	# El monitor del final: lo unico encendido de la sala. Se entra andando.
-	var pie: Vector2 = Vector2(MONITOR * 16 + 8, SUELO * 16)
-	C.objeto(deco, "res://art/placeholder/props/origen.png", pie, -3)
-	C.luz(deco, pie + Vector2(0.0, -46.0), Color(0.42, 0.86, 0.52), Vector2(2.0, 1.6), 0, 0.5, "grande")
-	var puerta: Node = C.instanciar("res://systems/transicion/puerta_nivel.tscn", raiz,
-		"Monitor", pie)
-	puerta.set("destino", RUTA_FINAL)
-	puerta.set("paso_hacia_dentro", 6.0)
+	var salida: Node = C.instanciar("res://systems/transicion/puerta_nivel.tscn", raiz,
+		"Salida", Vector2(SALIDA.x * 16 + 8, SALIDA.y * 16))
+	salida.set("destino", RUTA_SIGUIENTE)
+	var deco: Node = raiz.get_node("Decoracion")
+	C.objeto(deco, "res://art/placeholder/props/ascensor.png",
+		Vector2(SALIDA.x * 16 + 8, SALIDA.y * 16), -3)
+	C.luz(deco, Vector2(SALIDA.x * 16 + 8, SALIDA.y * 16 - 56), Color(0.42, 0.86, 0.52),
+		Vector2(0.4, 0.3), 0, 0.8)
 
 	C.instanciar("res://ui/diario/diario.tscn", raiz, "Diario", Vector2.ZERO)
-	C.polvo(raiz, Color(1.0, 0.7, 0.6, 0.12), 20)
+	C.polvo(raiz, Color(0.7, 0.9, 1.0, 0.12), 24)
 	C.paleta(raiz)
-	C.apertura(raiz, "Entrada", "", Vector2(0.8, 0.8), Vector2(40.0, -20.0), 2.0)
+	C.apertura(raiz, "Entrada", "", Vector2(0.75, 0.75), Vector2(60.0, -20.0), 2.2)
 
 	C.guardar(raiz, RUTA_NIVEL)
-	print("  nivel 5: arena %d-%d" % [ARENA_X0, ARENA_X1])
+	print("  nivel 5: %d tiles  enemigos: %d  torretas: %d  drones: %d" % [
+		ANCHO_TILES, ENEMIGOS.size(), TORRETAS.size(), DRONES.size()])
 	get_tree().quit()
-
-func _arena(raiz: Node2D) -> void:
-	var arena: Node2D = Node2D.new()
-	arena.name = "Arena"
-	arena.set_script(load("res://systems/jefe/arena_jefe.gd"))
-	arena.set("musica", load(MUSICA_JEFE))
-	arena.set("limite_camara", Rect2(ARENA_X0 * 16, ARENA_TECHO * 16 - 40,
-		(ARENA_X1 - ARENA_X0) * 16, 0))
-	# BORRADORES. El texto es del equipo (CLAUDE.md §5): reemplacenlos en el
-	# inspector del nodo Arena. Ver docs/TEXTOS_PENDIENTES.md.
-	arena.set("entrada_humana", "Cuando cayó, sus manos quedaron abiertas hacia mí. No sé si me estaba atacando o me estaba pidiendo algo. Le cerré los dedos uno a uno. Me temblaban las mías.")
-	arena.set("entrada_ambigua", "Guardaba la puerta y ya no la guarda. En su pantalla, un instante antes de apagarse, había una figura sentada. Podía ser yo. Podía ser cualquiera.")
-	arena.set("entrada_maquina", "Obstáculo eliminado. Su núcleo y el mío emitían en la misma frecuencia. Registro la coincidencia. No la clasifico.")
-	raiz.add_child(arena)
-
-	var jefe: Node = C.instanciar("res://actors/bosses/custodio.tscn", arena, "Custodio",
-		Vector2(int(ARENA_X1 - 5) * 16, SUELO * 16))
-	jefe.set("limite_izq", float(ARENA_X0 * 16))
-	jefe.set("limite_der", float(ARENA_X1 * 16))
-	jefe.set("techo_y", float(ARENA_TECHO * 16))
-	C.instanciar("res://systems/jefe/compuerta.tscn", arena, "CompuertaEntrada",
-		Vector2(ARENA_X0 * 16 - 8, SUELO * 16))
-	C.instanciar("res://systems/jefe/compuerta.tscn", arena, "CompuertaSalida",
-		Vector2(ARENA_X1 * 16 + 8, SUELO * 16))
-
-	var disparador: Area2D = Area2D.new()
-	disparador.name = "Disparador"
-	disparador.collision_layer = 0
-	disparador.collision_mask = 2
-	disparador.position = Vector2((ARENA_X0 + 3) * 16, SUELO * 16 - 32)
-	var forma: CollisionShape2D = CollisionShape2D.new()
-	forma.name = "Forma"
-	var caja: RectangleShape2D = RectangleShape2D.new()
-	caja.size = Vector2(16, 64)
-	forma.shape = caja
-	disparador.add_child(forma)
-	arena.add_child(disparador)
