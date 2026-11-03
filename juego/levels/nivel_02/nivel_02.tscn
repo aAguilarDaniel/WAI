@@ -1106,7 +1106,7 @@ position = Vector2(2984, 240)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("39_pkkpl")
-destino = "res://ui/fin/fin_demo.tscn"
+destino = "res://levels/nivel_03/nivel_03.tscn"
 
 [node name="Diario" type="CanvasLayer" parent="." unique_id=620913164 instance=ExtResource("40_hlo33")]
 process_mode = 3

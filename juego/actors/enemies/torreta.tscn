@@ -1,0 +1,45 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://actors/enemies/torreta.gd" id="1_torreta"]
+[ext_resource type="SpriteFrames" path="res://actors/enemies/torreta_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://systems/components/componente_salud.gd" id="3_salud"]
+[ext_resource type="Script" path="res://systems/components/componente_hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo.png" id="5_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="6_aditivo"]
+
+[sub_resource type="RectangleShape2D" id="Forma_torreta"]
+size = Vector2(12, 12)
+
+[node name="Torreta" type="Node2D"]
+script = ExtResource("1_torreta")
+
+[node name="Brillo" type="Sprite2D" parent="."]
+material = ExtResource("6_aditivo")
+z_index = -1
+position = Vector2(0, -8)
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("5_brillo")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+sprite_frames = ExtResource("2_frames")
+animation = &"reposo"
+
+[node name="Mira" type="Line2D" parent="."]
+z_index = 2
+width = 1.0
+default_color = Color(1, 0.35, 0.3, 0.6)
+
+[node name="Salud" type="Node" parent="."]
+script = ExtResource("3_salud")
+salud_maxima = 3
+duracion_invulnerabilidad = 0.2
+
+[node name="Hurtbox" type="Area2D" parent="."]
+position = Vector2(0, -8)
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("4_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("Forma_torreta")

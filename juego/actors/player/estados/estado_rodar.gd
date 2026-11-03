@@ -5,12 +5,10 @@ extends Estado
 
 var _t: float = 0.0
 var _invulnerable: bool = false
-var _tinte_previo: Color = Color.WHITE
 
 func entrar() -> void:
 	_t = 0.0
 	_invulnerable = false
-	_tinte_previo = jugador.sprite.modulate
 	jugador.velocity.x = jugador.mira * jugador.velocidad_rodar
 
 func salir() -> void:
@@ -46,4 +44,11 @@ func _fijar_invulnerable(activo: bool) -> void:
 	jugador.salud.fijar_invulnerable(activo)
 	if not jugador.rodar_mostrar_iframes:
 		return
-	jugador.sprite.modulate = jugador.color_iframes if activo else _tinte_previo
+	if activo:
+		jugador.sprite.modulate = jugador.color_iframes
+	else:
+		# NO se restaura el tinte de antes de rodar: si era el rojo del golpe y la
+		# gracia se acabo a mitad de la voltereta, el personaje se quedaba rojo
+		# hasta el siguiente golpe. Se mira como esta la salud AHORA.
+		jugador.sprite.modulate = jugador.tinte_herido if jugador.salud.en_gracia_por_golpe() \
+			else Color.WHITE

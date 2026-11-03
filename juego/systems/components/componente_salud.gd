@@ -41,6 +41,10 @@ func _process(delta: float) -> void:
 	if _invulnerable_restante <= 0.0:
 		invulnerabilidad_terminada.emit()
 
+## True solo durante la gracia tras un golpe, sin contar la del rodar.
+func en_gracia_por_golpe() -> bool:
+	return _invulnerable_restante > 0.0
+
 func es_invulnerable() -> bool:
 	return _invulnerable_restante > 0.0 or _invulnerable_externo
 

@@ -19,7 +19,12 @@ func configurar(direccion: Vector2, velocidad: float, dano: int, vida: float, fu
 	_restante = vida
 	hitbox.dano = dano
 	hitbox.fuente = fuente
-	scale.x = signf(_direccion.x) if _direccion.x != 0.0 else 1.0
+	# Horizontal: se voltea (los sprites miran a la derecha). Cualquier otra
+	# direccion (la torreta apunta en diagonal, la chatarra del jefe cae) se rota.
+	if absf(_direccion.y) < 0.01:
+		scale.x = signf(_direccion.x) if _direccion.x != 0.0 else 1.0
+	else:
+		rotation = _direccion.angle()
 
 func _ready() -> void:
 	hitbox.mato.connect(_al_matar)

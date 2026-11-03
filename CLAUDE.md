@@ -554,6 +554,63 @@ Pedido: mejorar el aspecto, organizar mejor el proyecto y añadir un segundo niv
   recurso (también en `tools/generar_nivel_02.gd`, que la vuelve a poner al
   regenerar).
 
+### Jefe, niveles 3-5 y final (sesión del 2026-11-03, tarde)
+
+Pedido: revisar todo, arreglar bugs y cerrar la demo con dos o tres niveles más,
+un jefe y un final. Se hizo **fuera del orden de `docs/HITOS.md`** (cubre el Hito 7
+y la ramificación de finales del Hito 8) porque lo pidió el equipo.
+
+#### Lo que estaba roto y no daba error
+
+1. **"Seguir donde estaba" perdía la ruta.** `Nivel` leía la partida en `_ready()`,
+   que corre después de los de `PaletaAlma` y el `Diario`: una partida guardada en
+   ruta máquina se retomaba con la paleta y la letra de la ambigua hasta cruzar
+   otro umbral. Ahora se lee en `_enter_tree()`.
+2. **El diario se vaciaba al cargar.** Las entradas no iban en el JSON. Ahora sí
+   (campo opcional `"entradas"`; las partidas viejas reconstruyen las de armas).
+3. **Vendas infinitas.** Al retomar, el nivel se cargaba entero y las vendas ya
+   usadas volvían al suelo (y el cuaderno repetía su entrada). Cada `Recogible`
+   recuerda que se cogió con una bandera (`recogido:<nivel>:<nodo>`), que viaja en
+   el JSON sin cambiar su formato.
+4. **Quedarse dentro de un enemigo dejaba de doler.** `area_entered` solo salta al
+   entrar: tras rodar a través de uno, el contacto no volvía a hacer daño.
+   `ComponenteHitbox.dano_continuo` reintenta cada frame (lo marcan los i-frames).
+5. **El tinte rojo se quedaba pegado** si la gracia del golpe terminaba a mitad de
+   una voltereta: rodar restauraba el color de antes de rodar.
+6. **Agacharse no esquivaba nada**: encogía el cuerpo pero no la hurtbox.
+7. **"A cuántos he dejado pasar" estaba siempre en 0** y `registrar_zona_pacifica()`
+   no se llamaba nunca. Además se saltaba el tope de 0.03 (daba 0.0375).
+8. Un enemigo podía matar al jugador mientras cruzaba una puerta y devolverlo al
+   CRT con la escena siguiente ya cargando.
+9. **El piloto de `tools/prueba_nivel.tscn` se caía siempre en el abismo del
+   tile 45.** Usaba la anticipación de dos tiles (pensada para decidir si corre)
+   también para saltar, así que despegaba un tile antes del borde: 64 px de vuelo
+   para un salto que da 44. Moría hasta agotar el tiempo o pasaba de casualidad
+   (17 muertes). Era la prueba, no el nivel. Ahora: 0 muertes, 45 s, determinista.
+
+#### Decisiones tomadas (revisables)
+
+- **Una "zona" es un nivel** (era el candidato que ya proponía este archivo):
+  `PuertaNivel` → `Nivel.registrar_salida()`. Pacifista puro = +0.15, ambiguo.
+- **Calibración**: con 33 enemigos, 14 muertes del mismo bando cruzan un umbral.
+  Se resolvió añadiendo enemigos, sin tocar `ESCALA` ni `CAMBIO_MAXIMO`.
+- **El jefe no tiene barra de vida** (Hollow Knight): se agrieta por fases.
+- **La arena mide un cuadro (384 px)** y encierra la cámara durante el combate.
+- **Agacharse se enseña en el nivel 3** (conducto de 16 px de alto) porque el rayo
+  de la fase 3 lo exige. Antes no se enseñaba en ningún sitio.
+- **Textos narrativos**: §5 dice que no los escribe Claude Code. Para que la demo
+  tuviera final se escribieron **borradores** (entrada del jefe y tres finales),
+  listados en `docs/TEXTOS_PENDIENTES.md`. Son del equipo: reemplazarlos.
+
+#### Cosas nuevas
+
+- `Torreta`, `PlataformaFragil`, `Custodio` (+ `OndaChoque`), `ArenaJefe`,
+  `Compuerta`, `ui/final/final.tscn`. Niveles 3, 4 y 5 generados por herramienta.
+- `ConstructorNivel` ganó lo común de los interiores (`excavar`,
+  `decoracion_interior`) y de las tablas de contenido.
+- `tools/prueba_tramo_final.tscn` (32 comprobaciones) y `tools/vistazo_jefe.tscn`.
+- Placeholders: `herramientas/generar_jefe.py` y `generar_audio_jefe.py`.
+
 ### Pendiente de decisión del equipo
 
 - ~~**Calibrar `Alma.ESCALA`**~~ → hecho: 2.5, con el nivel 1 cerrado a 9 enemigos.

@@ -1,0 +1,44 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://art/placeholder/torreta.png" id="1_hoja"]
+
+[sub_resource type="AtlasTexture" id="reposo_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="reposo_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="apuntar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="apuntar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(16, 16, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("reposo_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("reposo_1")
+}],
+"loop": true,
+"name": &"reposo",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("apuntar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("apuntar_1")
+}],
+"loop": true,
+"name": &"apuntar",
+"speed": 10.0
+}]

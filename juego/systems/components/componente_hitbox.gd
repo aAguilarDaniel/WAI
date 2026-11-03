@@ -15,6 +15,12 @@ signal mato(objetivo: ComponenteHurtbox)
 ## A quién se le atribuye el golpe. En el Hito 3 será el arma equipada.
 ## Si se deja vacío, se atribuye al dueño de la escena.
 @export var fuente: Node
+## Vuelve a intentar el golpe cada frame contra lo que siga tocando. Para el
+## dano por contacto: area_entered solo salta al ENTRAR, asi que un jugador que
+## se quedaba dentro del enemigo (tras rodar a traves, por ejemplo) dejaba de
+## recibir dano en cuanto acababan sus i-frames. Los i-frames de ComponenteSalud
+## siguen siendo los que marcan el ritmo.
+@export var dano_continuo: bool = false
 
 ## Busca la ComponenteHitbox que cuelga de la misma entidad que 'nodo'.
 ## La usa ComponenteArma cuando no se le asignó la hitbox a mano.
@@ -31,6 +37,12 @@ func _ready() -> void:
 	monitoring = activa_al_inicio
 	monitorable = false
 	area_entered.connect(_al_tocar_area)
+
+func _physics_process(_delta: float) -> void:
+	if not dano_continuo or not monitoring:
+		return
+	for area: Area2D in get_overlapping_areas():
+		_al_tocar_area(area)
 
 func activar() -> void:
 	monitoring = true

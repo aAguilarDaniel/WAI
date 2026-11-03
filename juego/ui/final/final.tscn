@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://ui/final/final.gd" id="1_final"]
+[ext_resource type="SpriteFrames" path="res://actors/player/jugador_frames.tres" id="2_frames"]
+[ext_resource type="Texture2D" path="res://art/placeholder/props/origen.png" id="3_origen"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo_grande.png" id="4_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="5_aditivo"]
+
+[node name="Final" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_final")
+
+[node name="Fondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.03, 0.025, 0.04, 1)
+
+[node name="Escena" type="Node2D" parent="."]
+
+[node name="Suelo" type="ColorRect" parent="Escena"]
+offset_left = 60.0
+offset_top = 176.0
+offset_right = 324.0
+offset_bottom = 177.0
+color = Color(0.29, 0.22, 0.2, 1)
+
+[node name="Halo" type="Sprite2D" parent="Escena"]
+material = ExtResource("5_aditivo")
+position = Vector2(232, 130)
+scale = Vector2(2.4, 2.0)
+texture = ExtResource("4_brillo")
+
+[node name="Pantalla" type="ColorRect" parent="Escena"]
+offset_left = 212.0
+offset_top = 113.0
+offset_right = 252.0
+offset_bottom = 148.0
+
+[node name="Monitor" type="Sprite2D" parent="Escena"]
+position = Vector2(232, 137)
+texture = ExtResource("3_origen")
+
+[node name="Figura" type="AnimatedSprite2D" parent="Escena"]
+position = Vector2(176, 164)
+sprite_frames = ExtResource("2_frames")
+animation = &"quieto"
+
+[node name="Texto" type="Label" parent="."]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 34.0
+offset_right = 352.0
+offset_bottom = 70.0
+horizontal_alignment = 1
+autowrap_mode = 3

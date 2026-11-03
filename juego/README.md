@@ -17,9 +17,14 @@ en Proyecto → Ajustes → Rendering → Renderer.
 
 1. Abrir Godot → **Importar** → seleccionar `juego/project.godot`.
 2. **F5**. La escena principal es `ui/menu/menu_principal.tscn`. Desde ahí,
-   *DESPERTAR* entra al nivel 1. El nivel 1 termina en el portal de un edificio,
-   que lleva al nivel 2 (el interior), y el nivel 2 termina en la pantalla de fin
-   de la demo.
+   *DESPERTAR* entra al nivel 1. El recorrido completo:
+
+   ```
+   Nivel 1 (exterior) -> portal del edificio -> Nivel 2 (la nave)
+     -> ascensor -> Nivel 3 (los conductos) -> escotilla -> Nivel 4 (la cornisa)
+     -> puerta del relicario -> Nivel 5 (antesala, el jefe, el último monitor)
+     -> Final (según la ruta) -> Fin de la demo (estadísticas y créditos)
+   ```
 
 Sin abrir el editor:
 
@@ -239,16 +244,28 @@ La tabla que había aquí decía que matar a los 9 del nivel 1 con el tubo daba 
 **No era cierto**: el recorte lo deja en +0.27, que no cruza ningún umbral. Con solo
 el nivel 1, cualquier partida terminaba en ruta ambigua. Con los dos niveles:
 
-| Cómo se juegan los dos niveles (15 enemigos) | Eje al final | Ruta |
-|---|---|---|
-| Matar a los 15 con el tubo (+0.03 por muerte) | +0.45 | Humano |
-| Matarlos con plasma o radiación (−0.03) | −0.45 | Máquina |
-| Matarlos con la pistola (+0.025) | +0.375 | Ambiguo, por poco |
-| Pasar sin matar a nadie | 0.00 | Ambiguo |
+Con los cinco niveles hay **33 enemigos** (15 de los niveles 1-2, 5 de patrulla y
+4 torretas en el 3 y en el 4) más el jefe:
 
-Hacen falta **14 muertes del mismo bando** para cruzar un umbral: alcanzable, pero
-justo. Subir `ESCALA` no cambia nada (manda el recorte); lo que mueve la cuenta es
-`CAMBIO_MAXIMO` o los umbrales. Es decisión del equipo (`CLAUDE.md` §7).
+| Cómo se juega la demo entera | Eje al final | Ruta |
+|---|---|---|
+| Matar a 14 o más con el tubo (+0.03 por muerte) | ≥ +0.42 | Humano |
+| Matar a 14 o más con plasma o radiación (−0.03) | ≤ −0.42 | Máquina |
+| Matar a 16 o más con la pistola (+0.025) | ≥ +0.40 | Humano |
+| Mezclar armas de los dos bandos | cerca de 0 | Ambiguo |
+| Pasar sin matar a nadie (+0.03 por nivel, ver abajo) | +0.15 | Ambiguo |
+
+Hacen falta **14 muertes del mismo bando de 33**: ahora es una decisión de estilo
+de juego, no una hazaña. Subir `ESCALA` no cambia nada (manda el recorte); lo que
+mueve la cuenta es `CAMBIO_MAXIMO` o los umbrales.
+
+**Una "zona" es un nivel.** Al cruzar una `PuertaNivel` sin haber matado a nadie en
+ese nivel, `Nivel.registrar_salida()` llama a `Alma.registrar_zona_pacifica()`
+(+0.03, acotado por la misma regla de §3.1). Y los enemigos que siguen vivos se
+suman a "A cuántos he dejado pasar", que antes estaba siempre en 0. El pacifista
+puro termina en ambiguo con inclinación humana: si el equipo quiere que llegue a la
+ruta humana, hay que subir `PESO_ZONA_PACIFICA` *y* `CAMBIO_MAXIMO`, o tratarlo
+como excepción a la regla de 0.03.
 
 **F3** abre el indicador de depuración del eje. Es temporal: `docs/HITOS.md`
 manda quitarlo en el Hito 8.
@@ -695,3 +712,89 @@ toca la cámara del juego.
 
 > **No usen `--headless` para filmar.** Sin renderizador real la `TerminalCRT` no
 > puede leer su `SubViewport` y el plano del CRT sale mal, en silencio.
+
+## Niveles 3 y 4
+
+Mismo método que los dos primeros: tablas en `tools/generar_nivel_03.gd` y
+`_04.gd`, una mecánica nueva por tramo. Lo común (excavar huecos, terminales,
+enemigos, torretas, recogibles, pistas) se movió a `ConstructorNivel`.
+
+**Nivel 3, los conductos** (interior, 180x20). Llegada del ascensor → pasillo con
+la primera torreta y coberturas → **conducto de un tile de alto que solo se cruza
+agachado** (el juego no enseñaba a agacharse y el rayo del jefe lo exige; lleva su
+`PistaContextual`) → pozo con pasarelas en zigzag bajo una torreta → galería alta
+con arco y dos enemigos → caída a la sala de torretas cruzadas → escotilla.
+
+**Nivel 4, la cornisa** (exterior, 172 tiles). La azotea de la catedral, con el
+cielo del nivel 1. Lo nuevo son las **plataformas que ceden**: tres abismos que se
+cruzan sobre ellas, uno con tres seguidas en escalera. Termina en la puerta del
+relicario, con la única luz roja del nivel (el color del jefe).
+
+### Peligros nuevos
+
+- **`Torreta`** (`actors/enemies/torreta.tscn`): en el suelo o colgada del techo.
+  Al verte (alcance 170 px **y** línea de visión: las coberturas sirven) apunta
+  0.8 s con una mira que parpadea; **los últimos 0.25 s la mira se congela**, así
+  que moverse o rodar en el último momento esquiva. Recarga 1.5 s. 3 de vida, está
+  en el grupo `enemigos` y matarla pesa en el eje como cualquier otro.
+- **`PlataformaFragil`** (`systems/peligros/`): aguanta 0.5 s con el jugador
+  encima (tiembla y cruje), cae y vuelve a los 2.6 s.
+
+## Nivel 5 y el jefe
+
+`levels/nivel_05/nivel_05.tscn`: antesala con CRT y dos vendas, la arena y la sala
+del último monitor.
+
+### El Custodio (`actors/bosses/custodio.tscn`)
+
+Composición, como todo: `ComponenteSalud` (30), `Hurtbox`, un `HitboxContacto`
+continuo y dos hitbox de golpe. Habla el idioma del resto del juego, **aviso →
+golpe → ventana**:
+
+| Fase | Desde | Ataques nuevos | Cómo se esquiva |
+|---|---|---|---|
+| 1 | 100 % | Zarpazo (de cerca); pisotón con dos ondas por el suelo | Rodar el zarpazo; **saltar** las ondas |
+| 2 | 66 % | Lluvia de chatarra: marcas rojas en el suelo 0.95 s antes, una siempre bajo el jugador | Moverse |
+| 3 | 33 % | Rayo a 20 px del suelo, con una línea fina de aviso | **Agacharse** (14 px) |
+
+- En cada cambio de fase se tambalea, ruge y se agrieta (`quieto_f2`/`_f3`), 1.5 s
+  invulnerable. **No hay barra de vida** (referente: Hollow Knight): el daño se lee
+  en el cuerpo.
+- Nunca repite tres veces seguidas el mismo ataque. En fase 3 los avisos se acortan
+  un 25 %, nunca por debajo de 0.4 s.
+- Todo es `@export`: ritmo por fase, umbrales, velocidades, altura del rayo.
+
+### La arena (`systems/jefe/arena_jefe.gd`)
+
+- Mide **24 tiles = 384 px, un cuadro exacto**. Al entrar se cierra la compuerta y
+  la cámara se encierra en la arena: jefe y jugador se ven siempre a la vez.
+- **Pausa de intimidación** (Hito 7): la música del nivel calla, el jefe despierta
+  en 3.2 s y solo entonces entra `musica_jefe.wav`. Tras morir, la pausa dura 1 s.
+- **Morir dentro** reinicia al jefe dormido y con la vida llena, reabre la compuerta
+  y suelta la cámara. Se reaparece en el CRT de la antesala.
+- **Al derrotarlo** escribe una entrada en el diario según la ruta, marca
+  `jefe_custodio_derrotado` y abre la salida.
+
+## El final
+
+`ui/final/final.tscn` (Hito 8). Se llega entrando andando en el último monitor. El
+protagonista sentado delante, como en cada CRT, y cinco líneas escritas **con la
+fuente y el color del diario de su ruta** (`Alma.ruta_actual()` en ese momento).
+En ruta máquina, el tecleo mete glitch. Después, la pantalla de fin de la demo.
+
+Los textos de los finales y de la entrada del jefe son **borradores**: ver
+`docs/TEXTOS_PENDIENTES.md`.
+
+## Comprobar el tramo final
+
+```
+godot --path juego res://tools/prueba_tramo_final.tscn   32 comprobaciones
+godot --path juego res://tools/vistazo_jefe.tscn         fotos del jefe y de los tres finales
+```
+
+La prueba cruza el conducto agachado (y comprueba que de pie no se puede), sube el
+pozo, recibe un disparo de torreta, cede en una plataforma frágil, mata una torreta
+con el tubo y mira que el eje se mueva, entra a la arena (compuerta, silencio,
+música, cámara), fuerza las dos fases, comprueba que el rayo **no** alcanza al que
+se agacha y **sí** al que está de pie, muere dentro, derrota al jefe, entra al final
+y retoma una partida en ruta máquina.

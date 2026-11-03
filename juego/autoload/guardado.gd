@@ -33,6 +33,9 @@ func guardar(checkpoint_id: String, datos_jugador: Dictionary) -> bool:
 		"armas": datos_jugador.get("armas", []),
 		"arma_equipada": str(datos_jugador.get("arma_equipada", "")),
 		"flags": EstadoJuego.banderas.duplicate(),
+		# Campo opcional, como "nivel": sin el, "Seguir donde estaba" abria un
+		# diario vacio aunque se hubieran recogido armas y el cuaderno.
+		"entradas": EstadoJuego.entradas.duplicate(true),
 		"estadisticas": EstadoJuego.estadisticas.duplicate(),
 	}
 	var archivo: FileAccess = FileAccess.open(RUTA_PARTIDA, FileAccess.WRITE)

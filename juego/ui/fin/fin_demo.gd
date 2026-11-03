@@ -1,8 +1,7 @@
-# Pantalla de cierre de la demo. Es el destino de la PuertaNivel del final del
-# nivel 2 (tools/generar_nivel_02.gd).
+# Pantalla de cierre de la demo. Llega aqui ui/final/final.tscn, despues del
+# final por ruta.
 #
-# No es un final: los finales por ruta son el Hito 8 y su texto es narrativo
-# (docs/TEXTOS_PENDIENTES.md). Esto solo cierra la rebanada vertical: el
+# No es el final: ese es ui/final/. Esto solo cierra la rebanada vertical: el
 # protagonista sentado frente a un monitor, como en cada guardado, las mismas
 # estadisticas que el diario y los creditos con las referencias artisticas.
 # El valor del eje NO aparece (CLAUDE.md §3.1).

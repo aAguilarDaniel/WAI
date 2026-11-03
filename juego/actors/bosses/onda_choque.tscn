@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://actors/bosses/onda_choque.gd" id="1_onda"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="2_hitbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo.png" id="3_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="4_aditivo"]
+
+[sub_resource type="RectangleShape2D" id="Forma_onda"]
+size = Vector2(10, 9)
+
+[node name="OndaChoque" type="Node2D"]
+script = ExtResource("1_onda")
+
+[node name="Brillo" type="Sprite2D" parent="."]
+modulate = Color(1, 0.55, 0.35, 0.9)
+material = ExtResource("4_aditivo")
+position = Vector2(0, -4)
+scale = Vector2(0.5, 0.35)
+texture = ExtResource("3_brillo")
+
+[node name="Nucleo" type="Line2D" parent="."]
+points = PackedVector2Array(-5, 0, -1, -8, 2, -3, 5, 0)
+width = 2.0
+default_color = Color(1, 0.85, 0.6, 1)
+
+[node name="Hitbox" type="Area2D" parent="."]
+position = Vector2(0, -4.5)
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("2_hitbox")
+dano = 1
+activa_al_inicio = true
+
+[node name="Forma" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("Forma_onda")

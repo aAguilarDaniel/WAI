@@ -103,3 +103,19 @@ func cargar(datos: Dictionary) -> void:
 	armas_obtenidas.assign(datos.get("armas", []))
 	estadisticas = datos.get("estadisticas", estadisticas).duplicate()
 	_tiempo_acumulado = float(estadistica("tiempo_seg"))
+	entradas.clear()
+	if datos.has("entradas"):
+		for entrada: Variant in datos["entradas"]:
+			if entrada is Dictionary:
+				entradas.append(entrada)
+		return
+	# Partida anterior a que se guardaran las entradas: al menos se reescriben
+	# las de las armas, que se pueden deducir del arsenal.
+	for arma: ArmaData in ComponenteArma.cargar_carpeta("res://systems/weapons/data"):
+		if armas_obtenidas.has(arma.id) and not arma.texto_diario.is_empty():
+			entradas.append({"titulo": arma.nombre, "texto": arma.texto_diario, "origen": arma.id})
+
+## Clave con la que un recogible recuerda que ya se cogio. Va en las banderas,
+## asi que viaja en el JSON de guardado sin cambiar su formato.
+static func clave_recogido(nivel: String, nombre: String) -> String:
+	return "recogido:%s:%s" % [nivel.get_file().get_basename(), nombre]

@@ -116,6 +116,9 @@ var gravedad_caida: float:
 
 # --- Estado interno ---
 
+## Tinte del sprite mientras dura la gracia tras un golpe.
+const tinte_herido: Color = Color(2.2, 0.7, 0.7)
+
 ## Hacia dónde mira: 1 derecha, -1 izquierda. Lo usa rodar y luego el ataque.
 var mira: int = 1
 
@@ -261,6 +264,12 @@ func ajustar_forma(agachado: bool) -> void:
 	var alto: float = 14.0 if agachado else 24.0
 	rect.size = Vector2(rect.size.x, alto)
 	forma.position.y = -alto * 0.5
+	# La hurtbox tambien: antes agacharse encogia el cuerpo pero no la zona que
+	# recibe golpes, asi que agacharse no esquivaba nada que pasara por arriba.
+	var zona: CollisionShape2D = hurtbox.get_node_or_null("Forma") as CollisionShape2D
+	if zona != null and zona.shape is RectangleShape2D:
+		(zona.shape as RectangleShape2D).size.y = alto
+		zona.position.y = -alto * 0.5
 
 ## True si hay techo justo encima y no puede levantarse.
 func hay_techo_encima() -> bool:
@@ -357,7 +366,7 @@ func sentarse(activo: bool) -> void:
 
 func _al_recibir_dano(_cantidad: int, direccion: Vector2) -> void:
 	direccion_ultimo_golpe = direccion
-	sprite.modulate = Color(2.2, 0.7, 0.7)
+	sprite.modulate = tinte_herido
 	Efectos.chispas(self, global_position + Vector2(0.0, -12.0), direccion,
 		Color(1.0, 0.42, 0.36))
 	# Mas fuerte que un golpe dado: recibir tiene que doler mas que acertar.

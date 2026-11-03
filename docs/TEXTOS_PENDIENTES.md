@@ -65,3 +65,20 @@ Cuantas menos palabras, mas fuerte el efecto.
 | Entrada del diario al derrotar al jefe, una por ruta | `actors/bosses/` | 7 |
 | Texto de los dos (o tres) finales | Gestor de finales | 8 |
 | Créditos, acreditando a John Martin, Nam June Paik y Beksiński | Menú | 8 |
+
+## Borradores del tramo final (sesión del 2026-11-03)
+
+Para que la demo tuviera jefe y final se escribieron **borradores**. Son de
+ustedes: reemplácenlos, y si alguno no sirve, bórrenlo. Se cambian desde el
+inspector, sin tocar código.
+
+| Texto | Dónde se cambia |
+|---|---|
+| Entrada del diario al derrotar al jefe, una por ruta | Nodo `Arena` de `levels/nivel_05/nivel_05.tscn` (`entrada_humana` / `_ambigua` / `_maquina`). También en `tools/generar_nivel_05.gd`, que los vuelve a poner al regenerar |
+| Las líneas de los tres finales | `ui/final/final.tscn`, nodo raíz (`lineas_humano` / `_ambiguo` / `_maquina`) |
+| El nombre del jefe, "El Custodio" | `titulo_entrada` del nodo `Arena` |
+
+Criterio con el que se escribieron, por si sirve: ninguna contesta la pregunta de
+`CLAUDE.md` §1. La humana se queda con lo que siente aunque sea un error; la
+máquina habla de sí misma como unidad (la "revelación temprana" de §1); la ambigua
+termina esperando una respuesta que no llega.

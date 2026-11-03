@@ -55,8 +55,10 @@ func registrar(peso: float) -> void:
 	_fijar(_valor + aplicado)
 
 ## Terminar una zona sin matar a nadie empuja hacia lo humano (CLAUDE.md §3.1).
+## Acotado igual que registrar(): 0.015 * 2.5 daba 0.0375 y se saltaba la regla
+## de que ninguna accion mueva el eje mas de CAMBIO_MAXIMO.
 func registrar_zona_pacifica() -> void:
-	_fijar(_valor + PESO_ZONA_PACIFICA * ESCALA)
+	_fijar(_valor + minf(PESO_ZONA_PACIFICA * ESCALA, CAMBIO_MAXIMO))
 
 ## Restaura el eje al cargar una partida. No emite umbral_cruzado: no hubo decisión.
 func cargar(valor_guardado: float) -> void:

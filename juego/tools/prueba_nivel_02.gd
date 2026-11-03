@@ -11,7 +11,7 @@ extends Node
 
 const NIVEL_1: String = "res://levels/nivel_01/nivel_01.tscn"
 const NIVEL_2: String = "res://levels/nivel_02/nivel_02.tscn"
-const FIN: String = "res://ui/fin/fin_demo.tscn"
+const FIN: String = "res://levels/nivel_03/nivel_03.tscn"
 
 var _fallos: int = 0
 var _respaldo: String = ""
@@ -104,7 +104,7 @@ func _prueba_salida() -> void:
 	jugador.salud.fijar_invulnerable(true)
 	jugador.global_position = Vector2(184 * 16, 15 * 16 - 1)
 	await _sostener("mover_der", 3.5, func() -> bool: return _escena() == FIN)
-	_comprobar("el ascensor del santuario lleva al fin de la demo", _escena() == FIN)
+	_comprobar("el ascensor del santuario lleva al nivel 3", _escena() == FIN)
 
 func _prueba_continuar() -> void:
 	# CargadorEscenas ignora un cambio pedido mientras el fundido anterior sigue

@@ -1,0 +1,172 @@
+[gd_resource type="SpriteFrames" load_steps=20 format=3]
+
+[ext_resource type="Texture2D" path="res://art/placeholder/custodio.png" id="1_hoja"]
+
+[sub_resource type="AtlasTexture" id="quieto_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 0, 56, 72)
+
+[sub_resource type="AtlasTexture" id="quieto_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 0, 56, 72)
+
+[sub_resource type="AtlasTexture" id="andar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 72, 56, 72)
+
+[sub_resource type="AtlasTexture" id="andar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 72, 56, 72)
+
+[sub_resource type="AtlasTexture" id="andar_2"]
+atlas = ExtResource("1_hoja")
+region = Rect2(112, 72, 56, 72)
+
+[sub_resource type="AtlasTexture" id="andar_3"]
+atlas = ExtResource("1_hoja")
+region = Rect2(168, 72, 56, 72)
+
+[sub_resource type="AtlasTexture" id="preparar_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 144, 56, 72)
+
+[sub_resource type="AtlasTexture" id="preparar_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 144, 56, 72)
+
+[sub_resource type="AtlasTexture" id="golpe_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 216, 56, 72)
+
+[sub_resource type="AtlasTexture" id="golpe_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 216, 56, 72)
+
+[sub_resource type="AtlasTexture" id="rayo_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 288, 56, 72)
+
+[sub_resource type="AtlasTexture" id="rayo_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 288, 56, 72)
+
+[sub_resource type="AtlasTexture" id="aturdido_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 360, 56, 72)
+
+[sub_resource type="AtlasTexture" id="aturdido_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 360, 56, 72)
+
+[sub_resource type="AtlasTexture" id="quieto_f2_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 432, 56, 72)
+
+[sub_resource type="AtlasTexture" id="quieto_f2_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 432, 56, 72)
+
+[sub_resource type="AtlasTexture" id="quieto_f3_0"]
+atlas = ExtResource("1_hoja")
+region = Rect2(0, 504, 56, 72)
+
+[sub_resource type="AtlasTexture" id="quieto_f3_1"]
+atlas = ExtResource("1_hoja")
+region = Rect2(56, 504, 56, 72)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("quieto_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("quieto_1")
+}],
+"loop": true,
+"name": &"quieto",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("andar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("andar_3")
+}],
+"loop": true,
+"name": &"andar",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("preparar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("preparar_1")
+}],
+"loop": true,
+"name": &"preparar",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("golpe_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("golpe_1")
+}],
+"loop": false,
+"name": &"golpe",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("rayo_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("rayo_1")
+}],
+"loop": true,
+"name": &"rayo",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("aturdido_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("aturdido_1")
+}],
+"loop": true,
+"name": &"aturdido",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("quieto_f2_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("quieto_f2_1")
+}],
+"loop": true,
+"name": &"quieto_f2",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("quieto_f3_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("quieto_f3_1")
+}],
+"loop": true,
+"name": &"quieto_f3",
+"speed": 3.0
+}]

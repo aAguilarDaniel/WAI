@@ -1,0 +1,99 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://actors/bosses/custodio.gd" id="1_custodio"]
+[ext_resource type="SpriteFrames" path="res://actors/bosses/custodio_frames.tres" id="2_frames"]
+[ext_resource type="Script" path="res://systems/components/componente_salud.gd" id="3_salud"]
+[ext_resource type="Script" path="res://systems/components/componente_hurtbox.gd" id="4_hurtbox"]
+[ext_resource type="Script" path="res://systems/components/componente_hitbox.gd" id="5_hitbox"]
+[ext_resource type="Texture2D" path="res://art/placeholder/efectos/brillo.png" id="6_brillo"]
+[ext_resource type="Material" path="res://art/materiales/aditivo.tres" id="7_aditivo"]
+
+[sub_resource type="RectangleShape2D" id="Forma_cuerpo"]
+size = Vector2(26, 60)
+
+[sub_resource type="RectangleShape2D" id="Forma_hurtbox"]
+size = Vector2(24, 56)
+
+[sub_resource type="RectangleShape2D" id="Forma_contacto"]
+size = Vector2(18, 46)
+
+[sub_resource type="RectangleShape2D" id="Forma_zarpazo"]
+size = Vector2(44, 34)
+
+[sub_resource type="RectangleShape2D" id="Forma_rayo"]
+size = Vector2(10, 6)
+
+[node name="Custodio" type="CharacterBody2D" groups=["jefe"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_custodio")
+
+[node name="Nucleo" type="Sprite2D" parent="."]
+modulate = Color(1, 0.35, 0.3, 0)
+material = ExtResource("7_aditivo")
+z_index = 1
+position = Vector2(0, -40)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("6_brillo")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -36)
+sprite_frames = ExtResource("2_frames")
+animation = &"quieto"
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -30)
+shape = SubResource("Forma_cuerpo")
+
+[node name="Salud" type="Node" parent="."]
+script = ExtResource("3_salud")
+salud_maxima = 30
+duracion_invulnerabilidad = 0.12
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 64
+collision_mask = 0
+script = ExtResource("4_hurtbox")
+
+[node name="Forma" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -30)
+shape = SubResource("Forma_hurtbox")
+
+[node name="HitboxContacto" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("5_hitbox")
+dano = 1
+dano_continuo = true
+
+[node name="Forma" type="CollisionShape2D" parent="HitboxContacto"]
+position = Vector2(0, -26)
+shape = SubResource("Forma_contacto")
+
+[node name="HitboxZarpazo" type="Area2D" parent="."]
+position = Vector2(30, -17)
+collision_layer = 32
+collision_mask = 16
+monitoring = false
+script = ExtResource("5_hitbox")
+dano = 2
+
+[node name="Forma" type="CollisionShape2D" parent="HitboxZarpazo"]
+shape = SubResource("Forma_zarpazo")
+
+[node name="HitboxRayo" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 16
+monitoring = false
+script = ExtResource("5_hitbox")
+dano = 2
+dano_continuo = true
+
+[node name="Forma" type="CollisionShape2D" parent="HitboxRayo"]
+shape = SubResource("Forma_rayo")
+
+[node name="LineaRayo" type="Line2D" parent="."]
+visible = false
+z_index = 4
+width = 1.0
+default_color = Color(0.7, 1, 0.75, 0.5)

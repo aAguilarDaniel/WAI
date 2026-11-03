@@ -19,6 +19,8 @@ Si tocan uno a mano, la próxima vez que corran el script lo pisan.
 | `generar_fuentes.py` | Las 4 fuentes bitmap (`.png` + `.fnt`) |
 | `generar_luces.py` | Los halos y el destello de `art/placeholder/efectos/` |
 | `generar_audio.py` | El ambiente en bucle y los 8 efectos de `audio/` |
+| `generar_jefe.py` | Torreta, proyectil enemigo, plataforma frágil, compuerta, gran monitor del final y el jefe (El Custodio), con sus `SpriteFrames` |
+| `generar_audio_jefe.py` | La música del jefe en bucle y 6 efectos del tramo final |
 
 ```
 python herramientas/generar_siluetas.py --contacto
@@ -28,6 +30,8 @@ python herramientas/generar_props.py --contacto
 python herramientas/generar_sprite_frames.py
 python herramientas/generar_fuentes.py --contacto
 python herramientas/generar_luces.py
+python herramientas/generar_jefe.py --contacto
+python herramientas/generar_audio_jefe.py
 python herramientas/generar_audio.py
 ```
 
@@ -382,3 +386,22 @@ funciona. Si una animación no existe, deja la que hubiera puesta.
   **después** de girar: la brasa del fondo no gira con él.
 - **La luz de canto va por el borde derecho** y el motor voltea el sprite con
   `flip_h`, así que dibujen siempre mirando a la derecha.
+
+## Tramo final: niveles 3-5, jefe y final (sesión del 2026-11-03)
+
+Generados por `herramientas/generar_jefe.py` y `generar_audio_jefe.py`. Las medidas
+son las de las colisiones de las escenas: redibujar encima no toca código.
+
+| Ruta final | Tamaño (px) | Frames | Descripción | Estado |
+|---|---|---|---|---|
+| `art/placeholder/custodio.png` | 56x72 por celda | 8 filas: `quieto` 2, `andar` 4, `preparar` 2, `golpe` 2, `rayo` 2, `aturdido` 2, `quieto_f2` 2, `quieto_f3` 2 | El jefe: figura de hueso y cable estilo Beksiński, monitor agrietado por cráneo. **Mira a la derecha**; los pies en el borde inferior. Colisión 26x60. `quieto_f2`/`_f3` son las grietas de cada fase | pendiente |
+| `art/placeholder/torreta.png` | 16x16 por celda | `reposo` 2, `apuntar` 2 | Monitor atornillado con cañón. Base abajo: colgada del techo se voltea sola | pendiente |
+| `art/placeholder/proyectiles/enemigo.png` | 8x8 | 1 | Bola roja: disparo de torreta y chatarra del jefe | pendiente |
+| `art/placeholder/props/plataforma_fragil.png` | 32x8 | 1 | Rejilla oxidada con grieta. Tiene que leerse distinta de la viga del tileset | pendiente |
+| `art/placeholder/props/compuerta.png` | 16x64 | 1 | Hoja de la compuerta de la arena, franjas de peligro abajo | pendiente |
+| `art/placeholder/props/origen.png` | 64x80 | 1 | El último monitor, más grande que el protagonista sentado. Pantalla apagada: la luz la pone la escena | pendiente |
+
+| Audio | Dónde | Nota |
+|---|---|---|
+| `audio/musica_jefe.wav` | `Arena.musica` en `nivel_05.tscn` | Bucle de 8 compases a 138 BPM. Cambiarla es cambiar ese recurso |
+| `rugido`, `pisoton`, `rayo_carga`, `rayo`, `disparo_torreta`, `derrumbe` | Custodio, torreta, plataforma frágil | Efectos sintetizados |

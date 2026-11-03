@@ -29,13 +29,28 @@ extends Node2D
 
 @onready var terreno: TileMapLayer = $Terreno
 
+## Partida leida en _enter_tree(), pendiente de aplicar al jugador en _ready().
+var _partida: Dictionary = {}
+## Enemigos eliminados al entrar: al salir por la puerta se compara para saber
+## si este nivel se cruzo sin matar a nadie (la "zona" de CLAUDE.md §3.1).
+var _eliminados_al_entrar: int = 0
+
 ## En _enter_tree y no en _ready: los _ready() de los hijos corren antes, y tanto
 ## CamaraJugador (que copia offset a offset_base) como la apertura (que guarda el
 ## encuadre al que volver) tienen que encontrarse ya el valor del nivel.
+##
+## La partida guardada se lee AQUI por lo mismo: Guardado.cargar() restaura Alma
+## y EstadoJuego, y PaletaAlma, el Diario y los Recogibles los consultan en sus
+## _ready(). Leida en _ready() (como antes) llegaba tarde: una partida guardada
+## en ruta maquina se retomaba con la paleta y la letra de la ruta ambigua, y los
+## recogibles ya cogidos volvian a aparecer.
 func _enter_tree() -> void:
 	var camara: Camera2D = get_node_or_null("Jugador/Camara") as Camera2D
 	if camara != null:
 		camara.offset = encuadre_camara
+	if CargadorEscenas.continuar_partida:
+		CargadorEscenas.continuar_partida = false
+		_partida = Guardado.cargar()
 
 func _ready() -> void:
 	# Efectos busca por este grupo el nodo del que colgar chispas y polvo: si
@@ -45,11 +60,26 @@ func _ready() -> void:
 	DirectorAudio.ambiente(ambiente, volumen_ambiente)
 	DirectorAudio.musica(musica, volumen_musica)
 	_ajustar_limites_de_camara()
-	if CargadorEscenas.continuar_partida:
-		CargadorEscenas.continuar_partida = false
+	_eliminados_al_entrar = EstadoJuego.estadistica("enemigos_eliminados")
+	if not _partida.is_empty():
 		_aplicar_partida_guardada()
 	elif not CargadorEscenas.datos_en_transito.is_empty():
 		_aplicar_transito()
+
+## La llama PuertaNivel al cruzarla. Cuenta los enemigos que siguen vivos como
+## evitados (la estadistica "A cuantos he dejado pasar" estaba siempre en 0) y,
+## si no se mato a nadie en el nivel, da el empujon humano de CLAUDE.md §3.1.
+## Cada nivel es una "zona": era el candidato que ya proponia CLAUDE.md §7.
+func registrar_salida() -> void:
+	var vivos: int = 0
+	for nodo: Node in get_tree().get_nodes_in_group("enemigos"):
+		var salud: ComponenteSalud = nodo.get_node_or_null("Salud") as ComponenteSalud
+		if salud != null and salud.esta_vivo():
+			vivos += 1
+	if vivos > 0:
+		EstadoJuego.sumar("enemigos_evitados", vivos)
+	if EstadoJuego.estadistica("enemigos_eliminados") == _eliminados_al_entrar:
+		Alma.registrar_zona_pacifica()
 
 func _ajustar_limites_de_camara() -> void:
 	if terreno == null or terreno.tile_set == null:
@@ -67,9 +97,8 @@ func _ajustar_limites_de_camara() -> void:
 ## Restaura salud, vendas, arsenal y posicion. Alma y EstadoJuego ya los aplica
 ## Guardado.cargar(); aqui solo va lo que es del jugador y del nivel.
 func _aplicar_partida_guardada() -> void:
-	var datos: Dictionary = Guardado.cargar()
-	if datos.is_empty():
-		return
+	var datos: Dictionary = _partida
+	_partida = {}
 	var jugador: Jugador = _jugador()
 	if jugador == null:
 		return

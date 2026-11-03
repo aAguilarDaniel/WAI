@@ -28,7 +28,8 @@ extends Node
 const C = preload("res://tools/constructor_nivel.gd")
 
 const RUTA_NIVEL: String = "res://levels/nivel_02/nivel_02.tscn"
-const RUTA_FIN: String = "res://ui/fin/fin_demo.tscn"
+## El ascensor del santuario baja a los conductos (nivel 3).
+const RUTA_FIN: String = "res://levels/nivel_03/nivel_03.tscn"
 const PROPS: String = "res://art/placeholder/props/"
 const INTERIOR: String = "res://art/placeholder/interior/"
 ## Cancion del nivel en bucle (el bucle lo da su .import, loop=true).

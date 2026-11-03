@@ -31,6 +31,12 @@ signal recogido(quien: Jugador)
 var _jugador_encima: Jugador = null
 
 func _ready() -> void:
+	# Al retomar una partida el nivel se carga entero otra vez: sin esto las
+	# vendas ya usadas volvian a estar en el suelo (vendas infinitas) y el
+	# cuaderno repetia su entrada en el diario.
+	if EstadoJuego.bandera(_clave()):
+		queue_free()
+		return
 	body_entered.connect(_al_entrar)
 	body_exited.connect(_al_salir)
 	_aplicar_textura()
@@ -78,6 +84,11 @@ func _entregar(jugador: Jugador) -> void:
 			jugador.recoger_venda(cantidad)
 	if not titulo_entrada.is_empty():
 		EstadoJuego.agregar_entrada(titulo_entrada, texto_entrada, "mundo")
+	EstadoJuego.fijar_bandera(_clave(), true)
 	DirectorAudio.efecto("recoger", -7.0)
 	recogido.emit(jugador)
 	queue_free()
+
+func _clave() -> String:
+	var nivel: String = owner.scene_file_path if owner != null else ""
+	return EstadoJuego.clave_recogido(nivel, name)

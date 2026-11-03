@@ -25,6 +25,7 @@ resource_local_to_scene = true
 size = Vector2(12, 24)
 
 [sub_resource type="RectangleShape2D" id="Forma_hurtbox_pj"]
+resource_local_to_scene = true
 size = Vector2(12, 24)
 
 [sub_resource type="RectangleShape2D" id="Forma_hitbox_pj"]

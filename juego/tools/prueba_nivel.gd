@@ -33,6 +33,7 @@ var _muertes: int = 0
 ## Tile del frame anterior. El atasco se mide contra ESTE y no contra la mejor
 ## marca: despues de morir, no superar la mejor marca es lo normal, no un atasco.
 var _ultimo_tile: int = -1
+var _posicion_previa: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	get_window().size = Vector2i(384 * 3, 216 * 3)
@@ -54,6 +55,10 @@ func _ready() -> void:
 	# superar su mejor marca y el arnes lo daba por atascado sin estarlo.
 	_jugador.salud.murio.connect(func(_f: Node) -> void:
 		_muertes += 1
+		# Cuando llega esta senal el jugador ya reaparecio: se usa la posicion del
+		# frame anterior, que es donde murio de verdad.
+		print("  muerte %d en el tile %d, fila %d" % [_muertes,
+			int(floor(_posicion_previa.x / 16.0)), int(floor(_posicion_previa.y / 16.0))])
 		_sin_avanzar = 0.0
 		_ultimo_tile = -1)
 	print("PRUEBA: arranca en el tile %d, meta en el %d" % [_tile_actual(), META])
@@ -62,6 +67,7 @@ func _physics_process(delta: float) -> void:
 	if _jugador == null or not is_instance_valid(_jugador):
 		return
 	_transcurrido += delta
+	_posicion_previa = _jugador.global_position
 	_soltar_vencidas(delta)
 	_pilotar()
 	_vigilar(delta)
@@ -79,9 +85,14 @@ func _pilotar() -> void:
 	if hueco >= 3:
 		_pulsar("correr", 0.8)
 
-	# Saltar: se acaba el suelo delante, hay un escalon, o hay pared.
+	# Saltar: se acaba el suelo JUSTO delante, hay un escalon, o hay pared.
+	# Solo el tile siguiente: la anticipacion de dos tiles de arriba es para
+	# decidir si corre. Usada tambien para saltar, el piloto despegaba un tile
+	# antes del borde (64 px de vuelo en vez de 32) y caia siempre en el abismo
+	# del tile 45, justo despues del primer CRT.
 	if _jugador.is_on_floor():
-		if hueco > 0 or _escalon_delante(tile, fila) or _jugador.is_on_wall():
+		var hueco_inmediato: bool = _hueco_delante(tile, fila) > 0 and _cerca_del_borde()
+		if hueco_inmediato or _escalon_delante(tile, fila) or _jugador.is_on_wall():
 			_pulsar("saltar", 0.40)
 
 	var enemigo: EnemigoPatrulla = _enemigo_cercano()
@@ -93,6 +104,11 @@ func _pilotar() -> void:
 		_pulsar("rodar", 0.1)
 	elif distancia < 34.0 and _jugador.puede_atacar():
 		_pulsar("atacar", 0.1)
+
+## True en la ultima mitad del tile: saltar desde el principio del tile pierde
+## 8 px de los 44 que da un salto andando.
+func _cerca_del_borde() -> bool:
+	return fmod(_jugador.global_position.x, 16.0) >= 8.0
 
 ## Cuantos tiles de vacio hay justo delante, mirando 5 columnas.
 func _hueco_delante(tile: int, fila: int) -> int:

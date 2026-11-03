@@ -31,6 +31,12 @@ func _al_entrar(cuerpo: Node2D) -> void:
 		return
 	_usada = true
 	jugador.fijar_control(false)
+	# Ya se esta yendo: un enemigo que lo alcanzara en el fundido lo mataba y lo
+	# devolvia al ultimo CRT mientras la escena siguiente ya estaba cargando.
+	jugador.salud.fijar_invulnerable(true)
+	var nivel: Nivel = get_tree().get_first_node_in_group("nivel") as Nivel
+	if nivel != null:
+		nivel.registrar_salida()
 	# Se adentra y se oscurece: la puerta se lo traga en vez de cortar.
 	var adentro: Tween = jugador.create_tween().set_parallel(true)
 	adentro.tween_property(jugador, "global_position:x",
