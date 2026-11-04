@@ -691,9 +691,17 @@ el juego como `.exe` y subirlo a GitHub.
 Custodio con entradas reales y sale `capturas/WAI_jugabilidad.mp4`. Si se queda sin
 corazones ni vendas se los rellena y lo cuenta en `RESCATES`.
 
-#### Visto en el video, sin revisar
+#### La pantalla del CRT
 
-- En la escena del CRT, la imagen tapa la carcasa del monitor y baja de la línea del suelo.
+La imagen del circuito se dibujaba a 48x36 sobre una carcasa de 30x28: tapaba el monitor
+y bajaba del suelo. Ahora encaja en el hueco de `crt_cuerpo.png` (24x17, se genera a 48x34).
+Si redibujan la carcasa con otro hueco, hay que mover `Pantalla` y el tamaño de `Circuito`.
+La cámara del circuito pasó de zoom 1.8 a 1.1: a 1.8 cortaba al personaje.
+
+**El protagonista no se distinguía en su propia pantalla.** El circuito no capta el cielo
+(va en una `CanvasLayer`), así que el fondo era transparente y se pintaba negro: silueta
+oscura sobre negro. Ahora `crt.gdshader` pinta ahí `fondo_tubo`, verde fósforo. La cita a
+TV Buddha depende de esto. `tools/prueba_crt.tscn` mira los píxeles que salen en pantalla.
 
 ### Pendiente de decisión del equipo
 

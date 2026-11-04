@@ -10,7 +10,7 @@ resource_local_to_scene = true
 shader = ExtResource("2_shader")
 shader_parameter/curvatura = 0.1
 shader_parameter/intensidad_scanline = 0.35
-shader_parameter/densidad_scanline = 90.0
+shader_parameter/densidad_scanline = 18.0
 shader_parameter/ruido = 0.06
 shader_parameter/bloom = 0.25
 shader_parameter/aberracion = 0.0025
@@ -41,22 +41,26 @@ texture = ExtResource("3_cuerpo")
 
 ; visibility_layer = 2 y el SubViewport solo mira la capa 1: asi la pantalla
 ; queda fuera de su propio encuadre y no hay recursion infinita.
+; El hueco de crt_cuerpo.png mide 24x17 y empieza en (-12, -26). La imagen del
+; circuito se genera al doble (48x34) para que no se pierda detalle al encuadrar.
 [node name="Pantalla" type="Sprite2D" parent="."]
 visibility_layer = 2
-position = Vector2(0, -15)
+position = Vector2(-12, -26)
+scale = Vector2(0.5, 0.5)
 material = SubResource("Mat_crt")
+centered = false
 
 [node name="Circuito" type="SubViewport" parent="."]
 disable_3d = true
 transparent_bg = true
 handle_input_locally = false
 canvas_cull_mask = 1
-size = Vector2i(48, 36)
+size = Vector2i(48, 34)
 render_target_update_mode = 0
 
 [node name="CamaraCircuito" type="Camera2D" parent="Circuito"]
 enabled = false
-zoom = Vector2(1.8, 1.8)
+zoom = Vector2(1.1, 1.1)
 
 [node name="CamaraEscena" type="Camera2D" parent="."]
 position = Vector2(-14, -18)

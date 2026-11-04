@@ -14,6 +14,10 @@ uniform float bloom : hint_range(0.0, 1.0) = 0.25;
 uniform float aberracion : hint_range(0.0, 0.02) = 0.0025;
 // Verde de fosforo del polo maquina (ARTE.md §1).
 uniform vec3 tinte_fosforo = vec3(0.62, 1.0, 0.72);
+// Lo que se ve donde la imagen es transparente (el cielo y el fondo van en capas
+// que el circuito no capta). Sin esto era negro, y el protagonista, que es lo mas
+// oscuro del cuadro, desaparecia en su propia pantalla: se perdia la cita a TV Buddha.
+uniform vec3 fondo_tubo = vec3(0.30, 0.46, 0.34);
 // Desplazamiento vertical. El script lo anima a saltos para la deriva ocasional.
 uniform float deriva : hint_range(-1.0, 1.0) = 0.0;
 // Brillo general. El script lo baja al encender y apagar la pantalla.
@@ -48,6 +52,7 @@ void fragment() {
 		vec3 color = vec3(rojo, centro.g, azul);
 
 		color *= tinte_fosforo;
+		color = mix(fondo_tubo, color, texture(TEXTURE, uv).a);
 
 		float linea = sin(uv.y * densidad_scanline * 3.14159265);
 		color *= 1.0 - intensidad_scanline * (0.5 + 0.5 * linea);

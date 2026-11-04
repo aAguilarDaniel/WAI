@@ -89,4 +89,5 @@ godot --path juego res://tools/prueba_tramo_final.tscn  # niveles 3-7, el Custod
 godot --path juego res://tools/prueba_secreto.tscn      # el registro, el Reflejo y el final secreto
 godot --path juego res://tools/prueba_controles.tscn    # el cartel de controles
 godot --path juego res://tools/prueba_pinchos.tscn      # los pozos con pinchos
+godot --path juego res://tools/prueba_crt.tscn          # la pantalla del CRT
 ```
