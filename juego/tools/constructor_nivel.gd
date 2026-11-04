@@ -468,3 +468,36 @@ static func prensas(padre: Node2D, tabla: Array) -> void:
 			"Prensa%02d" % (i + 1), Vector2(int(datos[0]) * 16 + 8, int(datos[1]) * 16))
 		prensa.set("recorrido", float(int(datos[2]) * 16))
 		prensa.set("desfase", float(datos[3]))
+
+## Fondo de los abismos de un exterior: paredes con colision, suelo y pinchos.
+## abismos: [[desde, hasta), ...] en tiles; alturas: fila del suelo por columna
+## (-1 = abismo); fondo: filas totales del terreno.
+##
+## El suelo va PROFUNDIDAD_POZO filas bajo el borde mas bajo, no al fondo del mapa:
+## la camara tarda en seguir la caida, y mas hondo se llegaba a los pinchos sin
+## haberlos visto. Las paredes se fuerzan a solidas porque bajo tierra hay relleno
+## sin colision: cayendo en diagonal se atravesaba el terreno.
+const PROFUNDIDAD_POZO: int = 4
+
+static func pozos(capa: TileMapLayer, padre: Node2D, abismos: Array,
+		alturas: PackedInt32Array, fondo: int) -> void:
+	for i: int in abismos.size():
+		var desde: int = int(abismos[i][0])
+		var hasta: int = int(abismos[i][1])
+		var suelo: int = mini(maxi(alturas[desde - 1], alturas[hasta]) + PROFUNDIDAD_POZO, fondo - 1)
+		for x: int in [desde - 1, hasta]:
+			for y: int in range(alturas[x] + 1, suelo + 1):
+				capa.set_cell(Vector2i(x, y), 0, EXT_SOLIDA)
+		for x: int in range(desde, hasta):
+			capa.set_cell(Vector2i(x, suelo), 0, EXT_SOLIDA)
+			for y: int in range(suelo + 1, fondo):
+				capa.set_cell(Vector2i(x, y), 0, EXT_RELLENO if y - suelo <= 3 else EXT_PROFUNDO)
+		var ancho: float = float(hasta - desde) * 16.0
+		pinchos(padre, "Pinchos%02d" % (i + 1),
+			Vector2(float(desde) * 16.0 + ancho * 0.5, float(suelo) * 16.0), ancho)
+
+## pie: centro de la base de los pinchos.
+static func pinchos(padre: Node2D, nombre: String, pie: Vector2, ancho: float) -> void:
+	var nodo: Node = instanciar("res://systems/peligros/pinchos.tscn", padre, nombre, pie)
+	nodo.set("ancho", ancho)
+	luz(padre, pie + Vector2(0.0, -8.0), Color(1.0, 0.5, 0.3), Vector2(ancho / 48.0, 0.5), 0, 0.35)

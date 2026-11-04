@@ -127,6 +127,9 @@ const PISTAS: Array = [
 	[95, "correr"], [127, "rodar"],
 ]
 
+## Tile sobre el que se centra el cartel de controles.
+const CARTEL_X: int = 11
+
 ## Donde empieza el jugador.
 const INICIO: int = 5
 
@@ -159,6 +162,8 @@ func _ready() -> void:
 func _crear_nivel(conjunto: TileSet) -> void:
 	var raiz: Node2D = C.raiz("Nivel01")
 	raiz.set("encuadre_camara", Vector2(0.0, -40.0))
+	# La camara no baja de donde acaba el terreno: al caer no se ve el vacio.
+	raiz.set("margen_inferior", 0)
 	var alturas: PackedInt32Array = _perfil_del_terreno()
 
 	# El cielo va en su propia CanvasLayer por debajo de todo: la capa 1 del
@@ -176,7 +181,9 @@ func _crear_nivel(conjunto: TileSet) -> void:
 	_agregar_fosos(raiz, alturas)
 	_agregar_edificio(raiz, alturas)
 	_agregar_decoracion(raiz, alturas)
-	_agregar_terreno(C.terreno(raiz, conjunto), alturas)
+	var terreno: TileMapLayer = C.terreno(raiz, conjunto)
+	_agregar_terreno(terreno, alturas)
+	C.pozos(terreno, C.contenedor(raiz, "Peligros"), ABISMOS, alturas, FONDO_TILES)
 	C.zona_mortal(raiz, ANCHO_TILES * 16.0, FONDO_TILES * 16.0 + 150.0)
 
 	# Los limites de camara NO se ponen aqui: PackedScene no guarda los cambios a
@@ -188,6 +195,10 @@ func _crear_nivel(conjunto: TileSet) -> void:
 	_agregar_enemigos(raiz, alturas)
 	_agregar_recogibles(raiz, alturas)
 	_agregar_pistas(raiz, alturas)
+	# El cartel de controles, en el llano del principio: se ve desde el primer
+	# cuadro y queda detras del personaje. Lo pidio el equipo (CLAUDE.md §7).
+	C.instanciar("res://ui/controles/cartel_controles.tscn", raiz, "CartelControles",
+		Vector2(CARTEL_X * 16, (alturas[CARTEL_X] - 1) * 16))
 	var puerta: Node = C.instanciar("res://systems/transicion/puerta_nivel.tscn", raiz,
 		"PortalEdificio", Vector2(PORTAL * 16, alturas[PORTAL] * 16))
 	puerta.set("destino", RUTA_SIGUIENTE)

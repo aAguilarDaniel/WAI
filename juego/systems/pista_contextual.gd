@@ -95,15 +95,25 @@ func _ocultar() -> void:
 	_animacion.tween_property(marca, "modulate:a", 0.0, 0.25)
 	_animacion.tween_callback(func() -> void: marca.visible = false)
 
+func _nombre_de_la_tecla() -> String:
+	return PistaContextual.nombre_de_accion(accion)
+
 ## Nombre corto de la tecla de la accion, leido del InputMap. Si hay un mando
 ## conectado se prefiere el boton, que es lo que la persona tiene en la mano.
-func _nombre_de_la_tecla() -> String:
-	var eventos: Array[InputEvent] = InputMap.action_get_events(accion)
+## Lo usa tambien el cartel de controles del nivel 1.
+static func nombre_de_accion(nombre_accion: StringName) -> String:
+	var eventos: Array[InputEvent] = InputMap.action_get_events(nombre_accion)
 	if not Input.get_connected_joypads().is_empty():
 		for evento: InputEvent in eventos:
 			var boton: InputEventJoypadButton = evento as InputEventJoypadButton
 			if boton != null:
 				return _nombre_de_boton(boton.button_index)
+		for evento: InputEvent in eventos:
+			var eje: InputEventJoypadMotion = evento as InputEventJoypadMotion
+			if eje != null and eje.axis == JOY_AXIS_TRIGGER_LEFT:
+				return "LT"
+			if eje != null and eje.axis == JOY_AXIS_TRIGGER_RIGHT:
+				return "RT"
 	for evento: InputEvent in eventos:
 		var tecla: InputEventKey = evento as InputEventKey
 		if tecla == null:
@@ -115,7 +125,7 @@ func _nombre_de_la_tecla() -> String:
 	return "?"
 
 ## Los nombres largos no caben en la placa a 384x216. Solo estos se traducen.
-func _abreviar(nombre: String) -> String:
+static func _abreviar(nombre: String) -> String:
 	match nombre:
 		"Space":
 			return "ESPACIO"
@@ -128,7 +138,7 @@ func _abreviar(nombre: String) -> String:
 		_:
 			return nombre.to_upper()
 
-func _nombre_de_boton(indice: int) -> String:
+static func _nombre_de_boton(indice: int) -> String:
 	match indice:
 		JOY_BUTTON_A:
 			return "A"
@@ -142,5 +152,17 @@ func _nombre_de_boton(indice: int) -> String:
 			return "RB"
 		JOY_BUTTON_LEFT_SHOULDER:
 			return "LB"
+		JOY_BUTTON_START:
+			return "START"
+		JOY_BUTTON_BACK:
+			return "BACK"
+		JOY_BUTTON_DPAD_LEFT:
+			return "IZQ"
+		JOY_BUTTON_DPAD_RIGHT:
+			return "DER"
+		JOY_BUTTON_DPAD_UP:
+			return "ARRIBA"
+		JOY_BUTTON_DPAD_DOWN:
+			return "ABAJO"
 		_:
 			return "BTN"

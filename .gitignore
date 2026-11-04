@@ -8,7 +8,7 @@ juego/*.translation
 capturas/
 
 # Exportaciones
-export_presets.cfg
+build/
 *.exe
 *.pck
 *.zip

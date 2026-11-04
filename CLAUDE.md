@@ -646,6 +646,41 @@ Pedido: más niveles y un jefe final secreto si se mata a todos los enemigos.
 - La única pista para el jugador es *"A cuántos he dejado pasar"* en el diario.
 - Textos del Reflejo y del final secreto: **borradores**, en `docs/TEXTOS_PENDIENTES.md`.
 
+### Controles visibles y .exe (sesión del 2026-11-04)
+
+Pedido: que los controles se vean en la primera parte del nivel 1, poder ejecutar
+el juego como `.exe` y subirlo a GitHub.
+
+- **Cartel de controles** (`ui/controles/`), en el mundo sobre el tile 11. **Revierte
+  a petición del equipo la idea anterior de no decir los controles al empezar**. Las
+  `PistaContextual` siguen como red de seguridad. Lee el InputMap, nunca texto fijo.
+- **Exportación**: `juego/export_presets.cfg` ahora se versiona (no lleva secretos).
+  Un solo `.exe` con el juego embebido, publicado como archivo de una Release porque
+  supera los 100 MB de git. `modify_resources=false`: cambiar el icono exige `rcedit`
+  en la máquina que exporta, así que sale con el icono de Godot.
+- **Verificación**: exportado desde macOS con Godot 4.7.2. Las pruebas corren desde un
+  `.pck` con el mismo contenido (`godot --main-pack`), que sí reproduce los remapeos
+  de un juego exportado. **El `.exe` no se ha ejecutado en un Windows real.**
+- La ventana se reduce al mayor múltiplo entero que quepa si 1920x1080 no entra en la
+  pantalla (`CargadorEscenas._encajar_ventana`).
+
+- **Pozos con pinchos** (niveles 1, 2 y 4), pedido jugando: antes se veía acabar el
+  mapa y caer mataba. Ahora **caer quita 2 corazones y devuelve al último suelo firme**
+  (como Hollow Knight); solo mata si no quedan corazones. Esto **cambia §3.5/§7**: caer
+  ya no devuelve siempre al CRT. Ver `juego/README.md`, "Los pozos".
+- **`generar_siluetas.py` ya no coincide con el arte versionado**: correrlo reescribe
+  otras 7 imágenes (parallax, foso, CRT). No se corrió: a `capa_6_primer_plano.png` se
+  le borró la franja de arriba directamente. **No regenerarlo sin revisar el diff.**
+
+#### Lo que estaba roto y no daba error
+
+1. **El juego exportado se quedaba sin audio.** En un paquete exportado `res://audio`
+   no lista los `.wav`, solo sus `.import`, y `DirectorAudio` filtraba por `.wav`. En
+   el editor nunca se notaba. **Regla: al recorrer `res://` con `DirAccess`, quitar
+   `.remap` e `.import`; y probar desde un `.pck`, no solo desde el editor.**
+2. **Barras y cables negros flotando en el cielo** (reportado jugando): la parte de
+   arriba de la capa 6, que no se mueve en vertical y no colgaba de nada.
+
 ### Pendiente de decisión del equipo
 
 - ~~**Calibrar `Alma.ESCALA`**~~ → hecho: 2.5, con el nivel 1 cerrado a 9 enemigos.

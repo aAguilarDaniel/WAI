@@ -118,11 +118,18 @@ func _prueba_fragil() -> void:
 	jugador.velocity = Vector2.ZERO
 	await _esperar(0.25)
 	_comprobar("la plataforma fragil aguanta al principio", jugador.is_on_floor())
-	await _esperar(0.8)
-	_comprobar("y despues cede (y=%d)" % int(jugador.global_position.y),
-		jugador.global_position.y > fragil.global_position.y + 8.0)
-	await _esperar_hasta(func() -> bool: return jugador.global_position.y < 200.0, 4.0)
-	await _esperar(2.8)
+	# Se mira mientras cae: al tocar los pinchos vuelve al borde enseguida.
+	var mas_bajo: float = jugador.global_position.y
+	var transcurrido: float = 0.0
+	while transcurrido < 1.6:
+		await get_tree().physics_frame
+		transcurrido += get_physics_process_delta_time()
+		mas_bajo = maxf(mas_bajo, jugador.global_position.y)
+	_comprobar("y despues cede (cae hasta y=%d)" % int(mas_bajo),
+		mas_bajo > fragil.global_position.y + 8.0)
+	jugador.salud.revivir()
+	jugador.salud.fijar_invulnerable(true)
+	await _esperar(2.0)
 	jugador.global_position = fragil.global_position + Vector2(0.0, -2.0)
 	jugador.velocity = Vector2.ZERO
 	await _esperar(0.2)

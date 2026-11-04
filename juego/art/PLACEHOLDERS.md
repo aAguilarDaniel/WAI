@@ -415,6 +415,7 @@ son las de las colisiones de las escenas: redibujar encima no toca código.
 | `art/placeholder/dron.png` | 16x12 por celda | `flotar` 2, `apuntar` 2, `picado` 2, `aturdido` 2 | Ojo de cámara con aspas. Hurtbox 12x9 centrada | pendiente |
 | `art/placeholder/props/prensa_cabeza.png` | 32x16 | 1 | Cara de la prensa, franjas de peligro abajo | pendiente |
 | `art/placeholder/props/prensa_vastago.png` | 8x16 (se repite en vertical) | 1 | El pistón | pendiente |
+| `art/placeholder/props/pinchos.png` | 16x12 (se repite en horizontal) | 1 | Fondo de los pozos. Claros y con punta ámbar: tienen que verse sobre lo más oscuro del cuadro | pendiente |
 | `art/placeholder/props/pantalla_secreta.png` | 128x96 | 1 | El CRT del que sale el Reflejo | pendiente |
 | El Reflejo | — | — | **No tiene hoja**: usa `jugador_frames.tres` teñido de negro. Si redibujan al protagonista, su reflejo cambia solo. Es a propósito | — |
 

@@ -69,8 +69,10 @@ func _cargar_efectos() -> void:
 		push_warning("DirectorAudio: no hay carpeta %s. El juego corre en silencio." % CARPETA)
 		return
 	for archivo: String in dir.get_files():
-		var nombre: String = archivo.trim_suffix(".remap")
-		if not nombre.ends_with(".wav"):
+		# En un juego exportado el .wav no aparece en la carpeta: solo su .import.
+		# Sin quitar ese sufijo, el .exe arrancaba sin un solo efecto ni ambiente.
+		var nombre: String = archivo.trim_suffix(".remap").trim_suffix(".import")
+		if not nombre.ends_with(".wav") or _efectos.has(nombre.get_basename()):
 			continue
 		var flujo: AudioStream = load(CARPETA.path_join(nombre)) as AudioStream
 		if flujo != null:

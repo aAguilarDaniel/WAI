@@ -5,6 +5,29 @@ Trabajo para la clase de Desarrollo de Videojuegos.
 
 Daniel Felipe Aguilar Latorre (522709) · Juan David Monsalve Niño (525559)
 
+## Jugar en Windows
+
+Descargar `WhoAmI.exe` de la [última Release](https://github.com/aAguilarDaniel/WAI/releases/latest)
+y ejecutarlo: es un solo archivo y no hay que instalar nada. Como no está firmado,
+Windows puede avisar con SmartScreen: *Más información* → *Ejecutar de todas formas*.
+
+Los controles están en un cartel al principio del nivel 1. Las partidas se guardan
+en `%APPDATA%\Godot\app_userdata\Who Am I\`.
+
+## Generar el .exe
+
+Hace falta la plantilla de exportación de Windows de la misma versión de Godot
+(Editor → Administrar plantillas de exportación). El preset está en
+`juego/export_presets.cfg`.
+
+```bash
+mkdir -p build
+godot --headless --path juego --export-release "Windows" ../build/WhoAmI.exe
+```
+
+El `.exe` pesa unos 115 MB, más que el límite de 100 MB de GitHub, así que **no va en
+el repo** (`build/` y `*.exe` están en `.gitignore`): se sube a una Release.
+
 ## Arrancar
 
 ```bash
@@ -64,4 +87,6 @@ godot --path juego res://tools/prueba_nivel.tscn  # ¿el nivel sigue siendo juga
 godot --path juego res://tools/prueba_nivel_02.tscn     # paso al nivel 2 y sus mecánicas
 godot --path juego res://tools/prueba_tramo_final.tscn  # niveles 3-7, el Custodio y el final
 godot --path juego res://tools/prueba_secreto.tscn      # el registro, el Reflejo y el final secreto
+godot --path juego res://tools/prueba_controles.tscn    # el cartel de controles
+godot --path juego res://tools/prueba_pinchos.tscn      # los pozos con pinchos
 ```

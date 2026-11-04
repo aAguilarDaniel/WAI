@@ -52,7 +52,7 @@ const HUECOS: Array = [
 	[56, 11, 80, 15],    # C. pasillo de arcos: 4 filas
 	[80, 1, 91, 15],     # D. pozo del montacargas
 	[91, 2, 132, 7],     # E. galeria alta, suelo en la fila 7
-	[104, 7, 111, 20],   # E. el foso de la galeria, abierto hasta abajo
+	[104, 7, 111, 12],   # E. el foso de la galeria: 5 filas, con pinchos que se ven al caer
 	[132, 2, 163, 15],   # F. la gran sala
 	[163, 11, 171, 15],  # G. pasaje del ultimo arco
 	[171, 4, 190, 15],   # G. santuario
@@ -163,7 +163,7 @@ func _crear_nivel(conjunto: TileSet) -> void:
 	var raiz: Node2D = C.raiz("Nivel02")
 	# Interior: no hay cielo que dejar ver por encima del techo.
 	raiz.set("margen_superior", 0)
-	raiz.set("margen_inferior", 24)
+	raiz.set("margen_inferior", 0)
 	raiz.set("encuadre_camara", Vector2(0.0, -14.0))
 	raiz.set("ambiente", "ambiente_interior")
 	raiz.set("volumen_ambiente", -12.0)
@@ -280,6 +280,7 @@ func _agregar_decoracion(raiz: Node2D) -> void:
 
 func _agregar_peligros(raiz: Node2D) -> void:
 	var nodo: Node2D = C.contenedor(raiz, "Peligros")
+	C.pinchos(nodo, "PinchosFoso", Vector2(107.5 * 16.0, 12.0 * 16.0), 7.0 * 16.0)
 	for i: int in ARCOS.size():
 		var datos: Array = ARCOS[i]
 		var arco: Node = C.instanciar("res://systems/peligros/arco_electrico.tscn", nodo,

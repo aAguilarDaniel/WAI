@@ -70,6 +70,13 @@ func aplicar_dano(cantidad: int, direccion: Vector2, fuente: Node) -> bool:
 		recibio_dano.emit(cantidad, direccion)
 	return true
 
+## Golpe que ignora la invulnerabilidad: los pinchos duelen aunque se caiga
+## rodando o recien golpeado. Si no, caer con i-frames saldria gratis.
+func herir_ignorando_gracia(cantidad: int, direccion: Vector2, fuente: Node) -> void:
+	_invulnerable_restante = 0.0
+	_invulnerable_externo = false
+	aplicar_dano(cantidad, direccion, fuente)
+
 ## Muerte que ignora la invulnerabilidad. La usa la ZonaMortal: caerse al vacio
 ## mata aunque estes en i-frames o esquivando.
 func matar(fuente: Node) -> void:

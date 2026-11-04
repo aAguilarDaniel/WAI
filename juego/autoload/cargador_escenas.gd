@@ -25,6 +25,7 @@ var _cambiando: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_encajar_ventana()
 	var capa: CanvasLayer = CanvasLayer.new()
 	capa.name = "Fundido"
 	capa.layer = 100
@@ -38,6 +39,21 @@ func _ready() -> void:
 	_velo.modulate.a = 0.0
 	_velo.visible = false
 	capa.add_child(_velo)
+
+## project.godot pide 1920x1080 (x5). En una pantalla mas pequena esa ventana se
+## sale por los bordes: se baja al mayor multiplo entero que quepa, para que los
+## pixeles sigan siendo cuadrados. Si cabe, no toca nada.
+func _encajar_ventana() -> void:
+	var ventana: Window = get_window()
+	if DisplayServer.get_name() == "headless" or ventana.mode != Window.MODE_WINDOWED:
+		return
+	var pantalla: Rect2i = DisplayServer.screen_get_usable_rect(ventana.current_screen)
+	if pantalla.size.x >= ventana.size.x and pantalla.size.y >= ventana.size.y:
+		return
+	var base: Vector2i = ventana.content_scale_size
+	var escala: int = maxi(1, mini(pantalla.size.x / base.x, pantalla.size.y / base.y))
+	ventana.size = base * escala
+	ventana.position = pantalla.position + (pantalla.size - ventana.size) / 2
 
 ## Funde a negro, cambia de escena y vuelve. Ignora llamadas mientras hay una
 ## transicion en curso: dos cambios encadenados dejaban la escena a medias.

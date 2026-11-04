@@ -128,6 +128,10 @@ signal vendas_cambiadas(cantidad: int)
 ## Dirección desde la que llegó el último golpe. La usa el estado Herido.
 var direccion_ultimo_golpe: Vector2 = Vector2.RIGHT
 
+## Ultimo terreno firme que piso. Vuelve aqui al caer en unos pinchos sin morir.
+## Las plataformas moviles y las fragiles no cuentan: podrian no seguir ahi.
+var ultimo_suelo_seguro: Vector2 = Vector2.ZERO
+
 ## Dónde reaparece al morir. En el Hito 5 lo reemplaza la última TerminalCRT.
 var punto_de_reaparicion: Vector2 = Vector2.ZERO
 
@@ -148,6 +152,7 @@ var _enfriamiento_ataque_restante: float = 0.0
 
 func _ready() -> void:
 	punto_de_reaparicion = global_position
+	ultimo_suelo_seguro = global_position
 	salud.recibio_dano.connect(_al_recibir_dano)
 	salud.murio.connect(_al_morir)
 	salud.invulnerabilidad_terminada.connect(_al_terminar_invulnerabilidad)
@@ -173,6 +178,7 @@ func _physics_process(delta: float) -> void:
 	var estaba_en_suelo: bool = is_on_floor()
 	maquina.procesar_fisica(delta)
 	move_and_slide()
+	_recordar_suelo()
 	if is_on_ceiling():
 		_corregir_esquina()
 	if estaba_en_suelo and not is_on_floor():
@@ -183,6 +189,26 @@ func _actualizar_temporizadores(delta: float) -> void:
 	_buffer_restante = maxf(0.0, _buffer_restante - delta)
 	_enfriamiento_rodar_restante = maxf(0.0, _enfriamiento_rodar_restante - delta)
 	_enfriamiento_ataque_restante = maxf(0.0, _enfriamiento_ataque_restante - delta)
+
+func _recordar_suelo() -> void:
+	if not is_on_floor():
+		return
+	for i: int in get_slide_collision_count():
+		var choque: KinematicCollision2D = get_slide_collision(i)
+		if choque.get_collider() is TileMapLayer and choque.get_normal().y < -0.7:
+			ultimo_suelo_seguro = global_position
+			return
+
+## Lo llama Pinchos. Duele y devuelve al ultimo suelo firme, con la gracia del
+## golpe puesta (como en Hollow Knight). Si el golpe mata, de la reaparicion se
+## encarga _al_morir: revive antes de volver de aqui, por eso se mira ANTES.
+func caer_en_pinchos(dano: int, fuente: Node) -> void:
+	var mortal: bool = salud.salud_actual <= dano
+	salud.herir_ignorando_gracia(dano, Vector2.DOWN, fuente)
+	if mortal:
+		return
+	velocity = Vector2.ZERO
+	set_deferred("global_position", ultimo_suelo_seguro)
 
 # --- API que usan los estados ---
 

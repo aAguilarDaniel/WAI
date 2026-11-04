@@ -300,16 +300,9 @@ def capa_6_primer_plano():
     img, d = _lienzo()
     rnd = random.Random(66)
     negro = NEGRO_FRENTE + (255,)
-    # Cableado colgando del borde superior.
-    for _ in range(26):
-        x = rnd.randrange(ANCHO)
-        caida = rnd.randint(14, 52)
-        _barra(d, x, 0, rnd.choice([1, 1, 2]), caida, negro)
-        if rnd.random() < 0.5:                # la comba del cable
-            _barra(d, x, caida, rnd.randint(4, 16), 1, negro)
-    # Viga superior rota, solo en los tercios laterales.
-    _barra(d, -30, 0, 150, rnd.randint(8, 14), negro)
-    _barra(d, 640, 0, 190, rnd.randint(8, 14), negro)
+    # Arriba NO va nada. Habia cables y una viga negros colgando del borde: esta
+    # capa no se mueve en vertical, asi que en un exterior flotaban en pleno cielo
+    # sin colgar de ningun sitio y se leian como un error de la imagen.
     # Escombros en el borde inferior. Cortos y separados a proposito: antes eran
     # bloques de hasta 22 px cada 4 px y borraban al personaje entero al pasar.
     x = 0

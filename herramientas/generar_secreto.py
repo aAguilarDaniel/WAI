@@ -87,6 +87,24 @@ def prensa_vastago():
     return img
 
 
+# =============================================================== pinchos ======
+
+def pinchos():
+    """16x12, se repite en horizontal: el fondo de los pozos. Claros y con la punta
+    ambar, porque van sobre lo mas oscuro del cuadro y tienen que verse al caer."""
+    img = lienzo(16, 12)
+    for base in (0, 8):
+        for y in range(12):
+            medio = (y + 1) // 2 if y < 8 else 4
+            for x in range(4 - medio, 4 + medio):
+                color = METAL_LUZ if x < 4 else METAL
+                punto(img, base + x, y, color)
+        punto(img, base + 3, 0, AMBAR)
+        punto(img, base + 4, 0, AMBAR)
+        punto(img, base + 3, 1, AMBAR)
+    return img
+
+
 # ============================================================ gran pantalla ===
 
 def pantalla_secreta():
@@ -112,6 +130,7 @@ if __name__ == "__main__":
     _guardar(prensa_cabeza(), "props", "prensa_cabeza.png")
     _guardar(prensa_vastago(), "props", "prensa_vastago.png")
     _guardar(pantalla_secreta(), "props", "pantalla_secreta.png")
+    _guardar(pinchos(), "props", "pinchos.png")
     if "--contacto" in sys.argv:
         ruta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "capturas", "hoja_secreto.png")
         pixel.contacto(filas + [[prensa_cabeza(), prensa_vastago()]], escala=8, columnas=2).save(ruta)

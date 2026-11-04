@@ -87,6 +87,10 @@ según el `.tres`.
 Todo el input pasa por el InputMap. Nunca leer teclas físicas directamente en
 el código: usar `Input.is_action_pressed("saltar")`, no `KEY_SPACE`.
 
+Estos controles se ven en el juego: **un cartel al principio del nivel 1**
+(`ui/controles/cartel_controles.tscn`). Lee las teclas del InputMap, así que cambia
+solo si se remapean en el diario o se conecta un mando.
+
 ## Documentación
 
 La fuente de verdad está un nivel arriba: `../CLAUDE.md`, `../docs/ARQUITECTURA.md`,
@@ -423,6 +427,18 @@ cuanto la usa una vez, ninguna pista de esa acción vuelve a salir en toda la
 partida. El nombre de la tecla lo lee del **InputMap**, así que si remapean los
 controles la pista cambia sola; con un mando conectado enseña el botón.
 
+### Los pozos
+
+Los abismos de los niveles 1, 2 y 4 tienen fondo, con pinchos
+(`systems/peligros/pinchos.tscn`): quitan **2 corazones**, aunque se caiga con
+i-frames, y devuelven al último suelo firme (`Jugador.ultimo_suelo_seguro`; las
+plataformas móviles y frágiles no cuentan). Si el golpe mata, es una muerte normal
+y se reaparece en el CRT. A los enemigos los matan, y cuentan para el secreto.
+
+Miden 4 filas bajo el borde a propósito: la cámara tarda en seguir la caída y, más
+hondos, se llegaba a los pinchos sin verlos. La cámara no baja de donde acaba el
+terreno, así que el final del mapa no se ve nunca.
+
 ### Comprobar que sigue siendo jugable
 
 ```
@@ -547,6 +563,8 @@ jugador para que mande el cielo; en el interior casi centrada).
 6 capas de `Parallax2D` en `Nivel01/Parallax`, de `scroll_scale.x` 0.03 (bruma) a
 1.28 (primer plano, que va **delante** del jugador). Las dimensiones exactas y qué
 debe ir en cada una están en `art/PLACEHOLDERS.md`.
+
+**La capa 6 ya no lleva nada arriba.** Tenía cables y una viga negros que, como la capa no se mueve en vertical, flotaban en pleno cielo.
 
 **`scroll_scale.y` es 0 y las imágenes se apoyan en el borde inferior del cuadro.**
 No es un descuido: con desplazamiento vertical las capas subían y bajaban con la

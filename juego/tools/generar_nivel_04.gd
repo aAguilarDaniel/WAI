@@ -83,6 +83,7 @@ func _ready() -> void:
 	var alturas: PackedInt32Array = _perfil()
 	var raiz: Node2D = C.raiz("Nivel04")
 	raiz.set("encuadre_camara", Vector2(0.0, -40.0))
+	raiz.set("margen_inferior", 0)
 	# Fuera vuelve el silencio del nivel 1: solo viento. La musica del jefe tiene
 	# que llegar a un oido descansado.
 	raiz.set("ambiente", "ambiente")
@@ -98,12 +99,14 @@ func _ready() -> void:
 	])
 	_fosos(raiz, alturas)
 	_decoracion(raiz, alturas)
-	_terreno(C.terreno(raiz, conjunto), alturas)
+	var terreno: TileMapLayer = C.terreno(raiz, conjunto)
+	_terreno(terreno, alturas)
 	C.zona_mortal(raiz, ANCHO_TILES * 16.0, FONDO_TILES * 16.0 + 150.0)
 
 	C.instanciar("res://actors/player/jugador.tscn", raiz, "Jugador",
 		Vector2(INICIO * 16, alturas[INICIO] * 16))
 	var peligros: Node2D = C.contenedor(raiz, "Peligros")
+	C.pozos(terreno, peligros, ABISMOS, alturas, FONDO_TILES)
 	var fragiles: Array = []
 	for datos: Array in FRAGILES:
 		fragiles.append([int(datos[0]) * 16 + 16, int(datos[1]) * 16])
