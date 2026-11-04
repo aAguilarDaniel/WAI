@@ -680,6 +680,20 @@ el juego como `.exe` y subirlo a GitHub.
    `.remap` e `.import`; y probar desde un `.pck`, no solo desde el editor.**
 2. **Barras y cables negros flotando en el cielo** (reportado jugando): la parte de
    arriba de la capa 6, que no se mueve en vertical y no colgaba de nada.
+3. **Caer andando a los pinchos era un bucle hasta morir** (salió en la v1.0.0-demo
+   original). La última pisada dejaba el cuerpo colgando del borde y se reaparecía sin
+   apoyo. Ahora `ultimo_suelo_seguro` exige suelo a los dos lados. La prueba anterior no
+   lo veía porque colocaba al jugador: **probar caminando, como juega una persona.**
+
+#### El video de jugabilidad
+
+`python3 herramientas/grabar_jugabilidad.py`: `tools/piloto_video.tscn` juega del menú al
+Custodio con entradas reales y sale `capturas/WAI_jugabilidad.mp4`. Si se queda sin
+corazones ni vendas se los rellena y lo cuenta en `RESCATES`.
+
+#### Visto en el video, sin revisar
+
+- En la escena del CRT, la imagen tapa la carcasa del monitor y baja de la línea del suelo.
 
 ### Pendiente de decisión del equipo
 

@@ -65,6 +65,22 @@ func _correr() -> void:
 	_comprobar("vuelve al suelo firme (%s)" % jugador.global_position,
 		jugador.global_position.distance_to(borde) < 12.0 and jugador.is_on_floor())
 
+	# Lo que hace un jugador de verdad: salir ANDANDO del borde. La ultima pisada deja
+	# el cuerpo colgando; si volviera ahi, caeria otra vez en bucle hasta morir.
+	await _esperar(1.0)
+	jugador.salud.revivir()
+	antes = jugador.salud.salud_actual
+	jugador.global_position = Vector2(42 * 16, 7 * 16 - 1)
+	await _esperar(0.2)
+	Input.action_press("mover_der")
+	await _esperar_hasta(func() -> bool: return not jugador.is_on_floor(), 2.0)
+	Input.action_release("mover_der")
+	await _esperar(2.0)
+	_comprobar("al salir andando del borde cae UNA vez y se queda en tierra (%d -> %d, %s)" % [
+		antes, jugador.salud.salud_actual, jugador.global_position],
+		jugador.salud.salud_actual == antes - 2 and jugador.is_on_floor()
+		and jugador.global_position.x <= 45.0 * 16.0 - 6.0)
+
 	# Rodar no libra: las paredes aguantan y duele igual. Cae en diagonal.
 	await _esperar(1.0)
 	antes = jugador.salud.salud_actual

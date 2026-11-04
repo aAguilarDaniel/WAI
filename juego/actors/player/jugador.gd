@@ -196,8 +196,18 @@ func _recordar_suelo() -> void:
 	for i: int in get_slide_collision_count():
 		var choque: KinematicCollision2D = get_slide_collision(i)
 		if choque.get_collider() is TileMapLayer and choque.get_normal().y < -0.7:
-			ultimo_suelo_seguro = global_position
+			if _suelo_a_ambos_lados():
+				ultimo_suelo_seguro = global_position
 			return
+
+## Hay suelo de sobra a los dos lados. Sin esto, el ultimo punto al salir andando de
+## un borde era el de la ultima pisada, con el cuerpo ya colgando: se reaparecia sin
+## apoyo y se volvia a caer a los pinchos, una y otra vez hasta morir.
+func _suelo_a_ambos_lados() -> bool:
+	const MARGEN: float = 12.0
+	const ABAJO: Vector2 = Vector2(0.0, 2.0)
+	return test_move(global_transform.translated(Vector2(-MARGEN, 0.0)), ABAJO) \
+		and test_move(global_transform.translated(Vector2(MARGEN, 0.0)), ABAJO)
 
 ## Lo llama Pinchos. Duele y devuelve al ultimo suelo firme, con la gracia del
 ## golpe puesta (como en Hollow Knight). Si el golpe mata, de la reaparicion se
